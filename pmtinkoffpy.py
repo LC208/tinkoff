@@ -53,7 +53,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         payments = billmgr.db.db_query(f'''
             SELECT p.id FROM payment p
             JOIN paymethod pm
-            WHERE module = 'pmtinkoff' AND p.status = {payment.PaymentStatus.INPAY.value}
+            WHERE module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value}
         ''')
 
         for p in payments:
