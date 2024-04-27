@@ -4,18 +4,18 @@ import payment
 import sys
 
 import billmgr.logger as logging
-
+import billmgr
 import json
 import requests
 import hashlib
 
 MODULE = 'payment'
-logging.init_logging('tinkoff_payment')
-logger = logging.get_logger('tinkoff_payment')
+logging.init_logging('tinkoffpayment')
+logger = logging.get_logger('tinkoffpayment')
 
-def get_token(request):
+def get_token(request, pswd):
     token_body = request.copy()
-    token_body["Password"]="TinkoffBankTest"
+    token_body["Password"]=pswd
     token_body = dict(sorted(token_body.items()))
     token = ""
     for v in [*token_body.values()]:
@@ -27,23 +27,39 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
     def Process(self):
         # необходимые данные достаем из self.payment_params, self.paymethod_params, self.user_params
         # здесь для примера выводим параметры метода оплаты (self.paymethod_params) и платежа (self.payment_params) в лог
-        logger.info(f"paymethod_params = {self.paymethod_params}")
-        logger.info(f"payment_params = {self.payment_params}")
-
-        # переводим платеж в статус оплачивается
-        payment.set_in_pay(self.elid, '', 'external_' + self.elid)
-        request_body = {"TerminalKey": "TinkoffBankTest","Amount": "19200","OrderId": self.elid,"Description": "Подарочная карта на 1000 рублей"}
-        request_body["Token"] = hashlib.sha256(get_token(request_body).encode("UTF-8")).hexdigest()
+        logger.info(f"procces pay")
+        request_body={}
+        request_body["TerminalKey"] = self.paymethod_params["terminalkey"] 
+        request_body["Amount"]  =  self.payment_params["paymethodamount"]
+        request_body["OrderId"] = self.payment_params["number"] #Для того что бы работал тестовый банк
+        request_body["Description"] =  self.payment_params["description"]
+        request_body["Token"] = hashlib.sha256(get_token(request_body, self.paymethod_params['terminalpsw']).encode("UTF-8")).hexdigest()
+        request_body["SuccessURL"] = self.success_page
+        request_body["FailURL"] = self.fail_page
         headers = {"Content-Type":"application/json"}
         resp = requests.post(url="https://securepay.tinkoff.ru/v2/Init",json=request_body,headers=headers)
+        if resp.status_code == 503:
+            raise billmgr.exception.XmlException('msg_error_repeat_again')
         
-        # url для перенаправления c cgi
-        # здесь, в тестовом примере сразу перенаправляем на страницу BILLmanager
-        # должны перенаправлять на страницу платежной системы
-        redirect_url = self.pending_page
+        try: 
+            obj = json.loads(resp.content.decode("UTF-8"))
+        except:
+            raise billmgr.exception.XmlException('msg_error_json_parsing_error')
+        
+        
+        try:
+            redirect_url = obj["PaymentURL"]
+        except:
+            payment.set_canceled(self.elid,"","")
+            raise billmgr.exception.XmlException('msg_error_no_url_provided')
+        
+        try:
+            payment.set_in_pay(self.elid, '', obj["PaymentId"])
+        except:
+             raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
+        
+        logger.info(f"set in pay")
 
-        # формируем html и отправляем в stdout
-        # таким образом переходим на redirect_url
         payment_form =  "<html>\n"
         payment_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
         payment_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
