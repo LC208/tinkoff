@@ -86,7 +86,7 @@ class PaymentCgi(ABC):
 
         self.lang = None           # язык используемый у клиента
 
-        logger.info("first check")
+        logger.info(os.environ)
         # пока поддерживаем только http метод GET
         if os.environ['REQUEST_METHOD'] != 'GET':
             raise NotImplemented
