@@ -9,6 +9,17 @@ import xml.etree.ElementTree as ET
 
 MODULE = 'payment'
 
+
+
+def get_token(request, pswd):
+    token_body = request.copy()
+    token_body["Password"]=pswd
+    token_body = dict(sorted(token_body.items()))
+    token = ""
+    for v in [*token_body.values()]:
+        token+=v
+    return token
+
 def parse_cookies(rawdata):
     from http.cookies import SimpleCookie
     cookie = SimpleCookie()

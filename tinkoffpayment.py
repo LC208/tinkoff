@@ -9,18 +9,12 @@ import json
 import requests
 import hashlib
 
+
 MODULE = 'payment'
 logging.init_logging('tinkoffpayment')
 logger = logging.get_logger('tinkoffpayment')
 
-def get_token(request, pswd):
-    token_body = request.copy()
-    token_body["Password"]=pswd
-    token_body = dict(sorted(token_body.items()))
-    token = ""
-    for v in [*token_body.values()]:
-        token+=v
-    return token
+
 
 class TinkoffPaymentCgi(payment.PaymentCgi):
 
@@ -31,9 +25,9 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         request_body={}
         request_body["TerminalKey"] = self.paymethod_params["terminalkey"] 
         request_body["Amount"]  =  self.payment_params["paymethodamount"]
-        request_body["OrderId"] = self.payment_params["number"] #Для того что бы работал тестовый банк
+        request_body["OrderId"] = f"external_{self.elid}"
         request_body["Description"] =  self.payment_params["description"]
-        request_body["Token"] = hashlib.sha256(get_token(request_body, self.paymethod_params['terminalpsw']).encode("UTF-8")).hexdigest()
+        request_body["Token"] = hashlib.sha256(payment.get_token(request_body, self.paymethod_params['terminalpsw']).encode("UTF-8")).hexdigest()
         request_body["SuccessURL"] = self.success_page
         request_body["FailURL"] = self.fail_page
         headers = {"Content-Type":"application/json"}
@@ -46,15 +40,14 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         
-        
         try:
             redirect_url = obj["PaymentURL"]
         except:
-            payment.set_canceled(self.elid,"","")
+            payment.set_canceled(self.elid,"", f"external_{self.elid}")
             raise billmgr.exception.XmlException('msg_error_no_url_provided')
         
         try:
-            payment.set_in_pay(self.elid, '', obj["PaymentId"])
+            payment.set_in_pay(self.elid, '', f"external_{self.elid}")
         except:
              raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
         

@@ -8,6 +8,10 @@ import billmgr.logger as logging
 
 import xml.etree.ElementTree as ET
 
+import json
+import requests
+import hashlib
+
 MODULE = 'payment'
 logging.init_logging('pmtinkoff')
 logger = logging.get_logger('pmtinkoff')
@@ -54,7 +58,33 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
-            payment.set_paid(p['id'], '', f"external_{p['id']}")
+            request_body={}
+            request_body["TerminalKey"] = "TinkoffBankTest"
+            request_body["PaymentId"] = f"external_{p['id']}"
+            request_body["Token"] = hashlib.sha256(payment.get_token(request_body, "TinkoffBankTest").encode("UTF-8")).hexdigest()
+            headers = {"Content-Type":"application/json"}
+            resp = requests.post(url="https://securepay.tinkoff.ru/v2/GetState",json=request_body,headers=headers)
+            if resp.status_code == 503:
+                raise billmgr.exception.XmlException('msg_error_repeat_again')
+            
+            try: 
+                obj = json.loads(resp.content.decode("UTF-8"))
+            except:
+                raise billmgr.exception.XmlException('msg_error_json_parsing_error')
+            
+            match obj["Status"]:
+                case "CONFIRMED":
+                    payment.set_paid(p['id'], '', f"external_{p['id']}")
+                case "СANCELED":
+                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
+                case "REJECTED":
+                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
+                case _:
+                    continue
+
+
+
+            
 
 
 TinkoffPaymentModule().Process()
