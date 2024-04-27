@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mgrdata>
-	<plugin name="pmtinkoff">
+	<plugin name="pmtinkoffpy">
 		<group>payment_method</group>
 		<author>BILLmanager team</author>
 		<params>
@@ -9,7 +9,7 @@
 		</params>
 	</plugin>
 
-	<metadata name="paymethod.edit.tinkoff" type="form">
+	<metadata name="paymethod.edit.tinkoffpy" type="form">
 		<form>
 			<page name="methodprops">
 				<field name="terminalkey">
@@ -24,15 +24,15 @@
 
 	<lang name="ru">
 		<messages name="plugin">
-			<msg name="desc_short_pmtinkoff">Test <![CDATA[<sup><font color="#008000">NEW</font></sup>]]></msg>
-			<msg name="desc_full_pmtinkoff">Платежный модуль Test</msg>
-			<msg name="price_pmtinkoff">Бесплатно</msg>
+			<msg name="desc_short_pmtinkoffpy">Test <![CDATA[<sup><font color="#008000">NEW</font></sup>]]></msg>
+			<msg name="desc_full_pmtinkoffpy">Платежный модуль Test</msg>
+			<msg name="price_pmtinkoffpy">Бесплатно</msg>
 		</messages>
 		<messages name="label_paymethod">
-			<msg name="pmtinkoff">Test</msg>
-			<msg name="module_pmtinkoff">Test</msg>
+			<msg name="pmtinkoffpy">Test</msg>
+			<msg name="module_pmtinkoffpy">Test</msg>
 		</messages>
-		<messages name="paymethod.edit.tinkoff">
+		<messages name="paymethod.edit.tinkoffpy">
 			<msg name="terminalkey">Идентификатор терминала</msg>
 			<msg name="terminalpsw">Пароль терминала</msg>
 			<msg name="hint_terminalkey">Идентификатор терминала. Выдается продавцу банком при заведении терминала</msg>

@@ -13,8 +13,8 @@ import requests
 import hashlib
 
 MODULE = 'payment'
-logging.init_logging('pmtinkoff')
-logger = logging.get_logger('pmtinkoff')
+logging.init_logging('pmtinkoffpy')
+logger = logging.get_logger('pmtinkoffpy')
 
 class TinkoffPaymentModule(payment.PaymentModule):
     def __init__(self):
@@ -25,7 +25,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_NOT_PROFILE] = True
         self.features[payment.FEATURE_PMVALIDATE] = True
 
-        self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpayment"
+        self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
 
     # в тестовом примере валидация проходит успешно, если

@@ -11,8 +11,8 @@ import hashlib
 
 
 MODULE = 'payment'
-logging.init_logging('tinkoffpayment')
-logger = logging.get_logger('tinkoffpayment')
+logging.init_logging('tinkoffpypayment')
+logger = logging.get_logger('tinkoffpypayment')
 
 
 
