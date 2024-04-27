@@ -47,7 +47,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
             raise billmgr.exception.XmlException('msg_error_no_url_provided')
         
         try:
-            payment.set_in_pay(self.elid, '', f"external_{self.elid}")
+            payment.set_in_pay(self.elid, '',  obj["PaymentId"])
         except:
              raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
         

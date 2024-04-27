@@ -51,7 +51,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         # получаем список платежей в статусе оплачивается
         # и которые используют обработчик pmtestpayment
         payments = billmgr.db.db_query(f'''
-            SELECT p.id FROM payment p
+            SELECT p.id, p.externalid FROM payment p
             JOIN paymethod pm
             WHERE module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value}
         ''')
@@ -60,7 +60,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             logger.info(f"change status for payment {p['id']}")
             request_body={}
             request_body["TerminalKey"] = "TinkoffBankTest"
-            request_body["PaymentId"] ="external_"+ str(p['id'])
+            request_body["PaymentId"] = p["externalid"]
             request_body["Token"] = hashlib.sha256(payment.get_token(request_body, "TinkoffBankTest").encode("UTF-8")).hexdigest()
             headers = {"Content-Type":"application/json"}
             resp = requests.post(url="https://securepay.tinkoff.ru/v2/GetState",json=request_body,headers=headers)
@@ -68,15 +68,15 @@ class TinkoffPaymentModule(payment.PaymentModule):
                 raise billmgr.exception.XmlException('msg_error_repeat_again')
             try: 
                 obj = json.loads(resp.content.decode("UTF-8"))
-                logger.info(p['id'])
+                logger.info(p['externalid'])
                 logger.info(obj)
                 status = obj["Status"]
                 if status == "CONFIRMED":
-                    payment.set_paid(p['id'], '', f"external_{p['id']}")
+                    payment.set_paid(p['id'], '', p['externalid'])
                 elif status ==  "СANCELED":
-                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
+                    payment.set_canceled(p['id'], '', p['externalid'])
                 elif status ==  "REJECTED":
-                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
+                    payment.set_canceled(p['id'], '', p['externalid'])
                 else:
                     continue
             except:
