@@ -6,7 +6,6 @@ from enum import Enum
 import os
 import sys
 import xml.etree.ElementTree as ET
-import billmgr.logger as logging
 
 MODULE = 'payment'
 
@@ -88,6 +87,7 @@ class PaymentCgi(ABC):
             raise NotImplemented
         
         # пока поддерживаем только http метод GET
+        # POST включён в условие для работы возможности перехода на оплату уже созданного платежа
         if os.environ['REQUEST_METHOD'] != 'GET' or os.environ['REQUEST_METHOD'] != 'POST':
             raise NotImplemented
         

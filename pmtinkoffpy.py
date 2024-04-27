@@ -28,18 +28,36 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
 
-    # в тестовом примере валидация проходит успешно, если
-    # Идентификатор терминала = rick, пароль терминала = morty
     def PM_Validate(self, xml : ET.ElementTree):
         logger.info("run pmvalidate")
 
-        # мы всегда можем вывести xml в лог, чтобы изучить, что приходит :)
         logger.info(f"xml input: {ET.tostring(xml.getroot(), encoding='unicode')}")
+        minamount_node = xml.find('./minamount')
+        minamount = int(minamount_node.text) if minamount_node is not None else 1
+        if minamount < 1:
+            raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
+        
+        currency_node = xml.find('./currency')
+        currency = currency_node.text if currency_node is not None else ''
+        if currency != "126":
+            raise billmgr.exception.XmlException('msg_error_only_support_rubles')
+        
+        commissionamount_node =xml.find('./commissionamount')
+        commissionamount = int(commissionamount_node.text) if minamount_node is not None else 0
+        if commissionamount > 0:
+            raise NotImplemented
 
-        #terminalkey_node = xml.find('./terminalkey')
-        #terminalpsw_node = xml.find('./terminalpsw')
-        #terminalkey = terminalkey_node.text if terminalkey_node is not None else ''
-        #terminalpsw = terminalpsw_node.text if terminalpsw_node is not None else ''
+        commissionpercent_node =xml.find('./commissionpercent')
+        commissionpercent = int(commissionpercent_node.text) if minamount_node is not None else 0
+        if commissionpercent > 0:
+            raise NotImplemented
+        
+        recurring_node =xml.find('./recurring')
+        recurring = recurring_node.text if minamount_node is not None else ''
+        if recurring != 'off':
+            raise NotImplemented
+
+
 
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
@@ -69,10 +87,14 @@ class TinkoffPaymentModule(payment.PaymentModule):
                 status = obj["Status"]
                 if status == "CONFIRMED":
                     payment.set_paid(p['id'], '', p['externalid'])
-                elif status ==  "СANCELED":
-                    payment.set_canceled(p['id'], '', p['externalid'])
                 elif status ==  "REJECTED":
                     payment.set_canceled(p['id'], '', p['externalid'])
+                    raise billmgr.exception.XmlException('msg_error_status_rejected')
+                elif status == "AUTHORIZED":
+                    resp = requests.post(url="https://securepay.tinkoff.ru/v2/Confirm",json=request_body,headers=headers)
+                    obj = json.loads(resp.content.decode("UTF-8"))
+                    if obj["Status"] == "true":
+                        logger.info(f"confirm authorized payment id: {p['id']}")
                 else:
                     continue
             except:
