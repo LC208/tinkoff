@@ -86,20 +86,24 @@ class PaymentCgi(ABC):
 
         self.lang = None           # язык используемый у клиента
 
+        logger.info("first check")
         # пока поддерживаем только http метод GET
         if os.environ['REQUEST_METHOD'] != 'GET':
             raise NotImplemented
-
+        
+        logger.info("second check")
         # по-умолчанию используется https
         if os.environ['HTTPS'] != 'on':
             raise NotImplemented
 
+        logger.info("third check")
         # получаем id платежа, он же elid
         input_str = os.environ['QUERY_STRING']
         for key, val in [param.split('=') for param in input_str.split('&')]:
             if key == "elid":
                 self.elid = val
-        
+    
+        logger.info("fourth check")
         # получаем url к панели
         self.mgrurl =  "https://" + os.environ['HTTP_HOST'] + "/billmgr"
         self.pending_page = f'{self.mgrurl}?func=payment.pending'
@@ -120,7 +124,7 @@ class PaymentCgi(ABC):
             self.payment_params[elem.tag] = elem.text
         for elem in payment_info_xml.findall("./payment/paymethod/"):
             self.paymethod_params[elem.tag] = elem.text
-        logger.info(self.payment_params)
+        
         # получаем параметры пользователя
         # получаем с помощью функции whoami информацию о авторизованном пользователе
         # в качестве параметра передаем auth - токен сессии
