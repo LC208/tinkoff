@@ -60,7 +60,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             logger.info(f"change status for payment {p['id']}")
             request_body={}
             request_body["TerminalKey"] = "TinkoffBankTest"
-            request_body["PaymentId"] = f"external_{p['id']}"
+            request_body["PaymentId"] ="external_"+ str(p['id'])
             request_body["Token"] = hashlib.sha256(payment.get_token(request_body, "TinkoffBankTest").encode("UTF-8")).hexdigest()
             headers = {"Content-Type":"application/json"}
             resp = requests.post(url="https://securepay.tinkoff.ru/v2/GetState",json=request_body,headers=headers)
