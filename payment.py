@@ -62,9 +62,6 @@ def set_paid(payment_id: str, info: str, externalid: str):
 def set_canceled(payment_id: str, info: str, externalid: str):
     MgrctlXml('payment.setcanceled', elid=payment_id, info=info, externalid=externalid)
 
-logging.init_logging('pypayment')
-logger = logging.get_logger('pypayment')
-
 class PaymentCgi(ABC):
     # основной метод работы cgi
     # абстрактный метод, который необходимо переопределить в конкретной реализации
@@ -86,15 +83,13 @@ class PaymentCgi(ABC):
 
         self.lang = None           # язык используемый у клиента
 
-        logger.info(os.environ)
-
         # по-умолчанию используется https
         if os.environ['HTTPS'] != 'on':
             raise NotImplemented
         
         # пока поддерживаем только http метод GET
-        #if os.environ['REQUEST_METHOD'] != 'GET':
-            #raise NotImplemented
+        if os.environ['REQUEST_METHOD'] != 'GET' or os.environ['REQUEST_METHOD'] != 'POST':
+            raise NotImplemented
         
         # получаем id платежа, он же elid
         input_str = os.environ['QUERY_STRING']
@@ -102,7 +97,6 @@ class PaymentCgi(ABC):
             if key == "elid":
                 self.elid = val
     
-        logger.info("fourth check")
         # получаем url к панели
         self.mgrurl =  "https://" + os.environ['HTTP_HOST'] + "/billmgr"
         self.pending_page = f'{self.mgrurl}?func=payment.pending'
