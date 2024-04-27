@@ -87,16 +87,15 @@ class PaymentCgi(ABC):
         self.lang = None           # язык используемый у клиента
 
         logger.info(os.environ)
-        # пока поддерживаем только http метод GET
-        if os.environ['REQUEST_METHOD'] != 'GET':
-            raise NotImplemented
-        
-        logger.info("second check")
+
         # по-умолчанию используется https
         if os.environ['HTTPS'] != 'on':
             raise NotImplemented
-
-        logger.info("third check")
+        
+        # пока поддерживаем только http метод GET
+        #if os.environ['REQUEST_METHOD'] != 'GET':
+            #raise NotImplemented
+        
         # получаем id платежа, он же elid
         input_str = os.environ['QUERY_STRING']
         for key, val in [param.split('=') for param in input_str.split('&')]:
