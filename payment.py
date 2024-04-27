@@ -6,6 +6,7 @@ from enum import Enum
 import os
 import sys
 import xml.etree.ElementTree as ET
+import billmgr.logger as logging
 
 MODULE = 'payment'
 
@@ -61,6 +62,8 @@ def set_paid(payment_id: str, info: str, externalid: str):
 def set_canceled(payment_id: str, info: str, externalid: str):
     MgrctlXml('payment.setcanceled', elid=payment_id, info=info, externalid=externalid)
 
+logging.init_logging('pypayment')
+logger = logging.get_logger('pypayment')
 
 class PaymentCgi(ABC):
     # основной метод работы cgi
@@ -96,7 +99,7 @@ class PaymentCgi(ABC):
         for key, val in [param.split('=') for param in input_str.split('&')]:
             if key == "elid":
                 self.elid = val
-
+        
         # получаем url к панели
         self.mgrurl =  "https://" + os.environ['HTTP_HOST'] + "/billmgr"
         self.pending_page = f'{self.mgrurl}?func=payment.pending'
@@ -117,7 +120,7 @@ class PaymentCgi(ABC):
             self.payment_params[elem.tag] = elem.text
         for elem in payment_info_xml.findall("./payment/paymethod/"):
             self.paymethod_params[elem.tag] = elem.text
-
+        logger.info(self.payment_params)
         # получаем параметры пользователя
         # получаем с помощью функции whoami информацию о авторизованном пользователе
         # в качестве параметра передаем auth - токен сессии

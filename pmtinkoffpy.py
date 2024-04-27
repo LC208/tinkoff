@@ -41,8 +41,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
         #terminalkey = terminalkey_node.text if terminalkey_node is not None else ''
         #terminalpsw = terminalpsw_node.text if terminalpsw_node is not None else ''
 
-
-
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
     def CheckPay(self):

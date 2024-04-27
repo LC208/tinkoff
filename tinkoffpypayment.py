@@ -14,7 +14,7 @@ MODULE = 'payment'
 logging.init_logging('tinkoffpypayment')
 logger = logging.get_logger('tinkoffpypayment')
 
-
+#Нужно добавить переход на оплату уже открытых платежей
 
 class TinkoffPaymentCgi(payment.PaymentCgi):
 
