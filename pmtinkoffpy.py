@@ -72,15 +72,15 @@ class TinkoffPaymentModule(payment.PaymentModule):
             except:
                 raise billmgr.exception.XmlException('msg_error_json_parsing_error')
             
-            match obj["Status"]:
-                case "CONFIRMED":
-                    payment.set_paid(p['id'], '', f"external_{p['id']}")
-                case "СANCELED":
-                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
-                case "REJECTED":
-                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
-                case _:
-                    continue
+            status = obj["Status"]
+            if status == "CONFIRMED":
+                payment.set_paid(p['id'], '', f"external_{p['id']}")
+            elif status ==  "СANCELED":
+                payment.set_canceled(p['id'], '', f"external_{p['id']}")
+            elif status ==  "REJECTED":
+                payment.set_canceled(p['id'], '', f"external_{p['id']}")
+            else:
+                continue
 
 
 
