@@ -5,11 +5,25 @@ import sys
 
 import billmgr.logger as logging
 
-MODULE = 'payment'
-logging.init_logging('testpayment')
-logger = logging.get_logger('testpayment')
+import json
+import requests
+import hashlib
 
-class TestPaymentCgi(payment.PaymentCgi):
+MODULE = 'payment'
+logging.init_logging('tinkoff_payment')
+logger = logging.get_logger('tinkoff_payment')
+
+def get_token(request):
+    token_body = request.copy()
+    token_body["Password"]="TinkoffBankTest"
+    token_body = dict(sorted(token_body.items()))
+    token = ""
+    for v in [*token_body.values()]:
+        token+=v
+    return token
+
+class TinkoffPaymentCgi(payment.PaymentCgi):
+
     def Process(self):
         # необходимые данные достаем из self.payment_params, self.paymethod_params, self.user_params
         # здесь для примера выводим параметры метода оплаты (self.paymethod_params) и платежа (self.payment_params) в лог
@@ -18,7 +32,11 @@ class TestPaymentCgi(payment.PaymentCgi):
 
         # переводим платеж в статус оплачивается
         payment.set_in_pay(self.elid, '', 'external_' + self.elid)
-
+        request_body = {"TerminalKey": "TinkoffBankTest","Amount": "19200","OrderId": self.elid,"Description": "Подарочная карта на 1000 рублей"}
+        request_body["Token"] = hashlib.sha256(get_token(request_body).encode("UTF-8")).hexdigest()
+        headers = {"Content-Type":"application/json"}
+        resp = requests.post(url="https://securepay.tinkoff.ru/v2/Init",json=request_body,headers=headers)
+        
         # url для перенаправления c cgi
         # здесь, в тестовом примере сразу перенаправляем на страницу BILLmanager
         # должны перенаправлять на страницу платежной системы
@@ -42,4 +60,4 @@ class TestPaymentCgi(payment.PaymentCgi):
         sys.stdout.write(payment_form)
 
 
-TestPaymentCgi().Process()
+TinkoffPaymentCgi().Process()

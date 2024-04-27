@@ -9,10 +9,10 @@ import billmgr.logger as logging
 import xml.etree.ElementTree as ET
 
 MODULE = 'payment'
-logging.init_logging('pmtestpayment')
-logger = logging.get_logger('pmtestpayment')
+logging.init_logging('pmtinkoffpayment')
+logger = logging.get_logger('pmtinkoffpayment')
 
-class TestPaymentModule(payment.PaymentModule):
+class TinkoffPaymentModule(payment.PaymentModule):
     def __init__(self):
         super().__init__()
 
@@ -21,7 +21,7 @@ class TestPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_NOT_PROFILE] = True
         self.features[payment.FEATURE_PMVALIDATE] = True
 
-        self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/testpayment"
+        self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpayment"
 
 
     # в тестовом примере валидация проходит успешно, если
@@ -59,4 +59,4 @@ class TestPaymentModule(payment.PaymentModule):
             payment.set_paid(p['id'], '', f"external_{p['id']}")
 
 
-TestPaymentModule().Process()
+TinkoffPaymentModule().Process()

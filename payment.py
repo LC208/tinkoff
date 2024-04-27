@@ -123,14 +123,14 @@ class PaymentCgi(ABC):
 			" WHERE u.id = '" +  user_node.attrib['id'] + "'"
         )
         if user_query:
-            self.user_params["user_id"] = user_query["id"];
-            self.user_params["phone"] = user_query["phone"];
-            self.user_params["email"] = user_query["email"];
-            self.user_params["realname"] = user_query["realname"];
-            self.user_params["language"] = user_query["language"];
-            self.user_params["country"] = user_query["country"];
-            self.user_params["account_id"] = user_query["account"];
-            self.user_params["account_registration_date"] = user_query["registration_date"];
+            self.user_params["user_id"] = user_query["id"]
+            self.user_params["phone"] = user_query["phone"]
+            self.user_params["email"] = user_query["email"]
+            self.user_params["realname"] = user_query["realname"]
+            self.user_params["language"] = user_query["language"]
+            self.user_params["country"] = user_query["country"]
+            self.user_params["account_id"] = user_query["account"]
+            self.user_params["account_registration_date"] = user_query["registration_date"]
 
 
 # фичи платежного модуля
