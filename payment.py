@@ -88,7 +88,7 @@ class PaymentCgi(ABC):
         
         # пока поддерживаем только http метод GET
         # POST включён в условие для работы возможности перехода на оплату уже созданного платежа
-        if os.environ['REQUEST_METHOD'] != 'GET' or os.environ['REQUEST_METHOD'] != 'POST':
+        if os.environ['REQUEST_METHOD'] not in ['POST', 'GET']:
             raise NotImplemented
         
         # получаем id платежа, он же elid

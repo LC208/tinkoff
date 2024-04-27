@@ -36,7 +36,6 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         resp = requests.post(url="https://securepay.tinkoff.ru/v2/Init",json=request_body,headers=headers)
         if resp.status_code == 503:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
-
         try: 
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
