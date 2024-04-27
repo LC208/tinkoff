@@ -22,6 +22,8 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         # необходимые данные достаем из self.payment_params, self.paymethod_params, self.user_params
         # здесь для примера выводим параметры метода оплаты (self.paymethod_params) и платежа (self.payment_params) в лог
         logger.info(f"procces pay")
+        logger.info(f"paymethod_params={self.paymethod_params}")
+        logger.info(f"payment_params={self.paymethod_params}")
         request_body={}
         request_body["TerminalKey"] = self.paymethod_params["terminalkey"] 
         request_body["Amount"]  =  self.payment_params["paymethodamount"]

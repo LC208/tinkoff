@@ -68,8 +68,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
                 raise billmgr.exception.XmlException('msg_error_repeat_again')
             try: 
                 obj = json.loads(resp.content.decode("UTF-8"))
-                logger.info(p['externalid'])
-                logger.info(obj)
                 status = obj["Status"]
                 if status == "CONFIRMED":
                     payment.set_paid(p['id'], '', p['externalid'])
