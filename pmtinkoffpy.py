@@ -66,21 +66,21 @@ class TinkoffPaymentModule(payment.PaymentModule):
             resp = requests.post(url="https://securepay.tinkoff.ru/v2/GetState",json=request_body,headers=headers)
             if resp.status_code == 503:
                 raise billmgr.exception.XmlException('msg_error_repeat_again')
-            
             try: 
                 obj = json.loads(resp.content.decode("UTF-8"))
+                status = obj["Status"]
+                if status == "CONFIRMED":
+                    payment.set_paid(p['id'], '', f"external_{p['id']}")
+                elif status ==  "СANCELED":
+                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
+                elif status ==  "REJECTED":
+                    payment.set_canceled(p['id'], '', f"external_{p['id']}")
+                else:
+                    continue
             except:
                 raise billmgr.exception.XmlException('msg_error_json_parsing_error')
             
-            status = obj["Status"]
-            if status == "CONFIRMED":
-                payment.set_paid(p['id'], '', f"external_{p['id']}")
-            elif status ==  "СANCELED":
-                payment.set_canceled(p['id'], '', f"external_{p['id']}")
-            elif status ==  "REJECTED":
-                payment.set_canceled(p['id'], '', f"external_{p['id']}")
-            else:
-                continue
+
 
 
 
