@@ -26,7 +26,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         logger.info(f"payment_params={self.payment_params}")
         request_body={}
         request_body["TerminalKey"] = self.paymethod_params["terminalkey"] 
-        request_body["Amount"]  =  self.payment_params["paymethodamount"]
+        request_body["Amount"]  =  str(float(self.payment_params["paymethodamount"])*100)
         request_body["OrderId"] = f"external_{self.elid}"
         request_body["Description"] =  self.payment_params["description"]
         request_body["Token"] = hashlib.sha256(payment.get_token(request_body, self.paymethod_params['terminalpsw']).encode("UTF-8")).hexdigest()
