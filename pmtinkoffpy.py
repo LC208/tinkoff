@@ -43,7 +43,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         #if currency != "126":
             #raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
-        commissionamount_node =xml.find('./commissionamount')
+        '''commissionamount_node =xml.find('./commissionamount')
         commissionamount = int(commissionamount_node.text) if minamount_node is not None else 0
         if commissionamount > 0:
             raise NotImplemented
@@ -56,7 +56,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         recurring_node =xml.find('./recurring')
         recurring = recurring_node.text if minamount_node is not None else ''
         if recurring != 'off':
-            raise NotImplemented
+            raise NotImplemented'''
 
 
 
