@@ -39,6 +39,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         
         currency_node = xml.find('./currency')
         currency = currency_node.text if currency_node is not None else ''
+        logger.info(f"currency={currency}")
         if currency != "126":
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
