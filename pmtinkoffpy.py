@@ -48,35 +48,21 @@ class TinkoffPaymentModule(payment.PaymentModule):
         logger.info(float(commissionamount))
         logger.info(float(commissionpercent))
         logger.info(recurring)
-        '''minamount_node = xml.find('minamount')
-        minamount = int(minamount_node.text) if minamount_node is not None else 1
-        logger.info(f"minamount={minamount}")
+
         if minamount < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
-        logger.info("111111111")
-        currency_node = xml.find('currency')
-        currency = currency_node.text if currency_node is not None else ''
-        logger.info(f"currency={currency}")
-        #if currency != "126":
-            #raise billmgr.exception.XmlException('msg_error_only_support_rubles')
-        
-        commissionamount_node =xml.find('commissionamount')
-        commissionamount = int(commissionamount_node.text) if minamount_node is not None else 0
-        logger.info(f"commissionamount={commissionamount}")
-        #if commissionamount > 0:
-            #raise NotImplemented
 
-        commissionpercent_node =xml.find('commissionpercent')
-        commissionpercent = int(commissionpercent_node.text) if minamount_node is not None else 0
-        logger.info(f"commissionamount={commissionpercent}")
-        #if commissionpercent > 0:
-            #raise NotImplemented
+        if currency != "126":
+            raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
-        recurring_node =xml.find('recurring')
-        recurring = recurring_node.text if minamount_node is not None else ''
-        logger.info(f"commissionamount={recurring}")
-        #if recurring != 'off':
-            #raise NotImplemented'''
+        if commissionamount > 0:
+            raise NotImplemented
+
+        if commissionpercent > 0:
+            raise NotImplemented
+        
+        if recurring != 'off':
+            raise NotImplemented
 
 
 
