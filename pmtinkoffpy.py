@@ -30,7 +30,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
     def PM_Validate(self, xml : ET.ElementTree):
         logger.info("run pmvalidate")
-        logger.info(f"xml input: {ET.tostring(xml.getroot(), encoding='unicode')}")
+        #logger.info(f"xml input: {ET.tostring(xml.getroot(), encoding='unicode')}")
 
         currency_node = xml.find('./paymethod/currency')
         minamount_node = xml.find('./paymethod/minamount')
