@@ -1,9 +1,11 @@
+import os
+os.chdir("/usr/local/mgr5")
+
 from abc import ABC, abstractmethod
 from billmgr.misc import MgrctlXml
 import billmgr.db
 import billmgr.exception
 from enum import Enum
-import os
 import sys
 import xml.etree.ElementTree as ET
 

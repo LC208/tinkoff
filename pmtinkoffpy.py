@@ -49,10 +49,10 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
         if currency != "126":
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
-        logger.info(float(commissionamount))
+        
         if float(commissionamount) > 0:
             raise NotImplemented
-        logger.info(4)
+        
         if float(commissionpercent) > 0:
             raise NotImplemented
         
