@@ -47,10 +47,9 @@ class TinkoffPaymentModule(payment.PaymentModule):
         if float(minamount) < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
 
-        logger.info(2)
         if currency != "126":
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
-        logger.info(3)
+        logger.info(float(commissionamount))
         if float(commissionamount) > 0:
             raise NotImplemented
         logger.info(4)
