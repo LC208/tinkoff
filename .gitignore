@@ -2,3 +2,4 @@ __pycache__/
 billmgr/
 README.txt
 test.py
+update.sh
