@@ -31,7 +31,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def PM_Validate(self, xml : ET.ElementTree):
         logger.info("run pmvalidate")
         
-        logger.info(f"xml input: {ET.dump(xml)}")
+        logger.info(f"xml input: {ET.dump(xml.getroot())}")
         minamount_node = xml.find('./paymethod/minamount')
         minamount = int(minamount_node.text) if minamount_node is not None else 1
         logger.info(f"minamount={minamount}")
