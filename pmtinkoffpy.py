@@ -31,7 +31,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def PM_Validate(self, xml : ET.ElementTree):
         logger.info("run pmvalidate")
         logger.info(f"xml input: {ET.tostring(xml.getroot(), encoding='unicode')}")
-        terminalkey_node = xml.find('./terminalkey')
+        terminalkey_node = xml.find('./paymethod/currency')
         terminalpsw_node = xml.find('./terminalpsw')
         terminalkey = terminalkey_node.text if terminalkey_node is not None else ''
         terminalpsw = terminalpsw_node.text if terminalpsw_node is not None else ''
