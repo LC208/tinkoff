@@ -39,24 +39,27 @@ class TinkoffPaymentModule(payment.PaymentModule):
         
         currency_node = xml.find('./currency')
         currency = currency_node.text if currency_node is not None else ''
-        #logger.info(f"currency={currency}")
+        logger.info(f"currency={currency_node.text}")
         #if currency != "126":
             #raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
-        '''commissionamount_node =xml.find('./commissionamount')
+        commissionamount_node =xml.find('./commissionamount')
         commissionamount = int(commissionamount_node.text) if minamount_node is not None else 0
-        if commissionamount > 0:
-            raise NotImplemented
+        logger.info(f"commissionamount={commissionamount_node.text}")
+        #if commissionamount > 0:
+            #raise NotImplemented
 
         commissionpercent_node =xml.find('./commissionpercent')
         commissionpercent = int(commissionpercent_node.text) if minamount_node is not None else 0
-        if commissionpercent > 0:
-            raise NotImplemented
+        logger.info(f"commissionamount={commissionpercent_node.text}")
+        #if commissionpercent > 0:
+            #raise NotImplemented
         
         recurring_node =xml.find('./recurring')
         recurring = recurring_node.text if minamount_node is not None else ''
-        if recurring != 'off':
-            raise NotImplemented'''
+        logger.info(f"commissionamount={recurring_node.text}")
+        #if recurring != 'off':
+            #raise NotImplemented
 
 
 
