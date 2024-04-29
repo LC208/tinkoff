@@ -44,8 +44,10 @@ class TinkoffPaymentModule(payment.PaymentModule):
         commissionpercent= commissionpercent_node.text if commissionpercent_node is not None else ''
         recurring= recurring_node.text if recurring_node is not None else ''
         logger.info(currency)
-        logger.info(minamount)
         logger.info(float(minamount))
+        logger.info(float(commissionamount))
+        logger.info(float(commissionpercent))
+        logger.info(recurring)
         '''minamount_node = xml.find('minamount')
         minamount = int(minamount_node.text) if minamount_node is not None else 1
         logger.info(f"minamount={minamount}")
