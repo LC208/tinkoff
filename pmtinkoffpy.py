@@ -44,27 +44,20 @@ class TinkoffPaymentModule(payment.PaymentModule):
         commissionpercent= commissionpercent_node.text if commissionpercent_node is not None else ''
         recurring= recurring_node.text if recurring_node is not None else ''
         
-        logger.info(1)
-
-        if minamount < 1:
-            logger.info(float(minamount))
+        if float(minamount) < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
 
         logger.info(2)
         if currency != "126":
-            logger.info(currency)
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         logger.info(3)
-        if commissionamount > 0:
-            logger.info(float(commissionamount))
+        if float(commissionamount) > 0:
             raise NotImplemented
         logger.info(4)
-        if commissionpercent > 0:
-            logger.info(float(commissionpercent))
+        if float(commissionpercent) > 0:
             raise NotImplemented
         
         if recurring != 'off':
-            logger.info(recurring)
             raise NotImplemented
 
 
