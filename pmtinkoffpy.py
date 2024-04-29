@@ -36,7 +36,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         minamount = int(minamount_node.text) if minamount_node is not None else 1
         if minamount < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
-        
+        logger.info("111111111")
         currency_node = xml.find('./currency')
         currency = currency_node.text if currency_node is not None else ''
         logger.info(f"currency={currency_node.text}")
