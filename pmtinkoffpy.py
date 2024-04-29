@@ -31,11 +31,21 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def PM_Validate(self, xml : ET.ElementTree):
         logger.info("run pmvalidate")
         logger.info(f"xml input: {ET.tostring(xml.getroot(), encoding='unicode')}")
-        terminalkey_node = xml.find('./paymethod/currency')
-        terminalpsw_node = xml.find('./terminalpsw')
-        terminalkey = terminalkey_node.text if terminalkey_node is not None else ''
-        terminalpsw = terminalpsw_node.text if terminalpsw_node is not None else ''
-        logger.info(terminalkey)
+
+        currency_node = xml.find('./paymethod/currency')
+        minamount_node = xml.find('./paymethod/minamount')
+        commissionamount_node = xml.find('./paymethod/commissionamount')
+        commissionpercent_node = xml.find('./paymethod/commissionpercent')
+        recurring_node= xml.find('./paymethod/recurring')
+
+        currency = currency_node.text if currency_node is not None else ''
+        minamount= minamount_node.text if minamount_node is not None else ''
+        commissionamount= commissionamount_node.text if commissionamount_node is not None else ''
+        commissionpercent= commissionpercent_node.text if commissionpercent_node is not None else ''
+        recurring= recurring_node.text if recurring_node is not None else ''
+        logger.info(currency)
+        logger.info(minamount)
+        logger.info(int(minamount))
         '''minamount_node = xml.find('minamount')
         minamount = int(minamount_node.text) if minamount_node is not None else 1
         logger.info(f"minamount={minamount}")
