@@ -45,7 +45,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         recurring= recurring_node.text if recurring_node is not None else ''
         logger.info(currency)
         logger.info(minamount)
-        logger.info(int(minamount))
+        logger.info(float(minamount))
         '''minamount_node = xml.find('minamount')
         minamount = int(minamount_node.text) if minamount_node is not None else 1
         logger.info(f"minamount={minamount}")
