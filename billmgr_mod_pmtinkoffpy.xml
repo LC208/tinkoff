@@ -24,13 +24,13 @@
 
 	<lang name="ru">
 		<messages name="plugin">
-			<msg name="desc_short_pmtinkoffpy">Test <![CDATA[<sup><font color="#008000">NEW</font></sup>]]></msg>
-			<msg name="desc_full_pmtinkoffpy">Платежный модуль Test</msg>
+			<msg name="desc_short_pmtinkoffpy">TinkoffPy <![CDATA[<sup><font color="#008000">NEW</font></sup>]]></msg>
+			<msg name="desc_full_pmtinkoffpy">Платежный модуль TinkoffPy</msg>
 			<msg name="price_pmtinkoffpy">Бесплатно</msg>
 		</messages>
 		<messages name="label_paymethod">
-			<msg name="pmtinkoffpy">Test</msg>
-			<msg name="module_pmtinkoffpy">Test</msg>
+			<msg name="pmtinkoffpy">TinkoffPy</msg>
+			<msg name="module_pmtinkoffpy">TinkoffPy</msg>
 		</messages>
 		<messages name="paymethod.edit.tinkoffpy">
 			<msg name="terminalkey">Идентификатор терминала</msg>
