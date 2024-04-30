@@ -37,18 +37,7 @@ GET_STATE = "GetState"
 INIT = "Init"
 CONFIRM = "Confirm"
 
-fail_form =  "<html>\n"
-fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
-fail_form += "	<script language='JavaScript'>\n"
-fail_form += "		function DoSubmit() {\n"
-fail_form += "			window.location.assign('" + "https://" + os.environ['HTTP_HOST'] + "/billmgr?func=payment.fail"+ "');\n"
-fail_form += "		}\n"
-fail_form += "	</script>\n"
-fail_form += "</head>\n"
-fail_form += "<body onload='DoSubmit()'>\n"
-fail_form += "</body>\n"
-fail_form += "</html>\n"
+
 
 class Termianl:
 
@@ -73,6 +62,18 @@ class Termianl:
         return obj
 
     def _send_request(self,method,command, main_param ={}, additional_param={}):
+        fail_form =  "<html>\n"
+        fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
+        fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
+        fail_form += "	<script language='JavaScript'>\n"
+        fail_form += "		function DoSubmit() {\n"
+        fail_form += "			window.location.assign('" + "https://" + os.environ['HTTP_HOST'] + "/billmgr?func=payment.fail"+ "');\n"
+        fail_form += "		}\n"
+        fail_form += "	</script>\n"
+        fail_form += "</head>\n"
+        fail_form += "<body onload='DoSubmit()'>\n"
+        fail_form += "</body>\n"
+        fail_form += "</html>\n"
         self._generate_token(main_param)
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
