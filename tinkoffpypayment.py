@@ -37,7 +37,8 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         try:
             obj = terminal.init_deal(str(float(self.payment_params["paymethodamount"])*100), f"external_{self.elid}",self.success_page,self.fail_page)
             redirect_url = obj["PaymentURL"]
-        except:
+        except Exception as err:
+            logger.error(err.args)
             sys.stdout.write(fail_form)
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
         logger.info(f"set in pay")
