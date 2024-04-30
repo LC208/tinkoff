@@ -78,8 +78,13 @@ class TinkoffPaymentModule(payment.PaymentModule):
         except:
             logger.info("test")
 
-    
+    def RF_Tune(self, xml):
+        logger.info("tune")
+        return super().RF_Tune(xml)
 
+    def RF_Validate(self, xml):
+        logger.info("validate")
+        return super().RF_Validate(xml)
 
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
