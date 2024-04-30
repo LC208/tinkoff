@@ -110,7 +110,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             obj = terminal.get_state_deal(pm[0]['externalid'])
             logger.info(obj["Success"])
             logger.info(obj["Status"])
-            if(obj["Success"] != 'true' or obj["Status"] != 'CONFIRMED' or obj["Status"] != 'AUTHORIZED'):
+            if(obj["Success"] != 'true' or not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
                 raise NotImplemented("test")
         except Exception as ex:
             logger.info(ex.args)
