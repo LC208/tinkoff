@@ -27,7 +27,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
         fail_form += "	<script language='JavaScript'>\n"
         fail_form += "		function DoSubmit() {\n"
-        fail_form += "			window.location.assign('" + self.fail_page + "/billmgr?func=payment.fail"+ "');\n"
+        fail_form += "			window.location.assign('" + self.fail_page + "');\n"
         fail_form += "		}\n"
         fail_form += "	</script>\n"
         fail_form += "</head>\n"
