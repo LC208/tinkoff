@@ -75,6 +75,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         # и которые используют обработчик pmtestpayment
         payments = billmgr.db.db_query(f'''
             SELECT p.id, p.externalid, p.paymethod FROM payment p
+            JOIN paymethod pm
             WHERE module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value}
         ''')
         
