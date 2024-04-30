@@ -22,7 +22,10 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_REDIRECT] = True
         self.features[payment.FEATURE_NOT_PROFILE] = True
         self.features[payment.FEATURE_PMVALIDATE] = True
-
+        self.features[payment.FEATURE_REFUND] = True
+        self.features[payment.FEATURE_RFSET] = True
+        self.features[payment.FEATURE_RFVALIDATE] = True
+        
         self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
 
@@ -91,7 +94,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             status = obj["Status"]
             if status == "CONFIRMED":
                 payment.set_paid(p['id'], '', p['externalid'])
-            elif status ==  "REJECTED":
+            elif status ==  "REJECTED" or status == "DEADLINE_EXPIRED":
                 payment.set_canceled(p['id'], '', p['externalid'])
                 raise billmgr.exception.XmlException('msg_error_status_rejected')
             elif status == "AUTHORIZED":
