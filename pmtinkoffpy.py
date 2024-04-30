@@ -76,7 +76,8 @@ class TinkoffPaymentModule(payment.PaymentModule):
             amount = amount_node.text if amount_node is not None else ''
             pm = billmgr.db.db_query(f'''
             SELECT pm.xmlparams FROM paymethod pm
-            WHERE pm.module = 'pmtinkoffpy' AND pm.id = {elid}
+            JOIN payment p
+            WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
             ''')
             logger.info(pm)
             logger.info(pm[0])
