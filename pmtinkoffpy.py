@@ -77,11 +77,11 @@ class TinkoffPaymentModule(payment.PaymentModule):
             key = key_node.text if key_node is not None else ''
             elid = elid_node.text if elid_node is not None else ''
             amount = amount_node.text if amount_node is not None else ''
-            logger.info(str(float(amount)*-100))
+            logger.info(str(int(amount)*-100))
             terminal = Termianl(key, psw)
             #payment_id = terminal.check_order(f"external_{elid}")["Payments"][0]["PaymentId"]
             payment_id = "4338284581"
-            terminal.cancel_deal(payment_id,str(float(amount)*-100))
+            terminal.cancel_deal(payment_id,str(int(amount)*-100))
         except:
             logger.info("test")
 
