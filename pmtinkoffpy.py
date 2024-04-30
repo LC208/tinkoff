@@ -88,8 +88,8 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def RF_Validate(self, xml: ET.ElementTree):
         try:
             logger.info("test")
-            logger.info(ET.tostring(xml,encoding='unicode'))
             xml = xml.getroot()
+            logger.info(ET.tostring(xml,encoding='unicode'))
             elid_node = xml.find('./source_payment')
             elid = elid_node.text if elid_node is not None else ''
             pm = billmgr.db.db_query(f'''
