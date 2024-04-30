@@ -24,6 +24,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_PMVALIDATE] = True
         self.features[payment.FEATURE_REFUND] = True
         self.features[payment.FEATURE_RFSET] = True
+        self.features[payment.FEATURE_RFVALIDATE] = True
 
         self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
@@ -88,8 +89,8 @@ class TinkoffPaymentModule(payment.PaymentModule):
         return super().RF_Tune(xml)
 
     def RF_Validate(self, xml):
-        return super().RF_Validate(xml)
-
+        logger.info("test")
+        raise NotImplemented
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
     def CheckPay(self):
