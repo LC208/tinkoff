@@ -83,7 +83,7 @@ class Termianl:
     
     def cancel_deal(self, payment_id, amount):
         data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
-        return self._send_request('POST', 'Confirm', data, {"Amount" : amount})
+        return self._send_request('POST', 'Cancel', data, {"Amount" : amount})
 
     def check_order(self, elid):
         data = {"TerminalKey": self.terminalkey, "OrderId": elid}
