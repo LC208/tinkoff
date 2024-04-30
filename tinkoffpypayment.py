@@ -32,7 +32,6 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         request_body["FailURL"] = self.fail_page
         headers = {"Content-Type":"application/json"}
         resp = requests.post(url="https://securepay.tinkoff.ru/v2/Init",json=request_body,headers=headers)
-        logger.info(resp.content.decode("UTF-8"))
         if resp.status_code == 503:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         try: 
@@ -41,16 +40,19 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         
         if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
+            payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         
         try:
             redirect_url = obj["PaymentURL"]
         except:
+            payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
             raise billmgr.exception.XmlException('msg_error_no_url_provided')
         
         try:
             payment.set_in_pay(self.elid, '',  obj["PaymentId"])
         except:
+            payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
             raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
         
 
