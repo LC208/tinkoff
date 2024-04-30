@@ -70,10 +70,10 @@ class TinkoffPaymentModule(payment.PaymentModule):
         print(ET.tostring(xml.getroot(),encoding="unicode"))
     
     def RF_Set(self, xml: ET.ElementTree):
-        xmlstr = ET.tostring(xml,encoding="unicode")
-        logger.info(xmlstr)
+        logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
     
     def RF_Validate(self, xml: ET.ElementTree):
+        logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
         print()
 
     
