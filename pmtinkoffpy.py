@@ -69,6 +69,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         logger.info("start refund process")
         xml = xml.getroot()
         try:
+            logger.info(ET.tostring(xml, encoding='unicode'))
             psw_node= xml.find('./xmlparams/terminalpsw')
             key_node= xml.find('./xmlparams/terminalkey')
             elid_node = xml.find('./source_payment')
