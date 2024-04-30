@@ -42,7 +42,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
             sys.stdout.write(fail_form)
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
         logger.info(f"set in pay")
-        payment.set_in_pay(self.elid,'',obj["PaymentID"])
+        payment.set_in_pay(self.elid,'',obj["PaymentId"])
 
         payment_form =  "<html>\n"
         payment_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
