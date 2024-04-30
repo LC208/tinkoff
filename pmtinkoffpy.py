@@ -79,10 +79,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             JOIN payment p
             WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
             ''')
-            logger.info(pm)
-            logger.info(pm[0])
-            logger.info(pm['xmlparams'])
-            xml = ET.fromstring(pm['xmlparams'])
+            xml = ET.fromstring(pm[0]['xmlparams'])
             psw_node= xml.find('./terminalpsw')
             key_node= xml.find('./terminalkey')
             psw = psw_node.text if psw_node is not None else ''
