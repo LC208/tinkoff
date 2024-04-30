@@ -69,7 +69,7 @@ class Termianl:
         try: 
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
-            raise billmgr.exception.XmlException('msg_error_json_parsing_error',resp.content.decode("UTF-8"))
+            raise billmgr.exception.XmlException(resp.content.decode("UTF-8"),resp.content.decode("UTF-8"))
         
         if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
