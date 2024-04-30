@@ -73,11 +73,6 @@ class Termianl:
         
         if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
-        
-
-        
-
-        
         return obj
 
     def _generate_token(self, data):
@@ -86,8 +81,13 @@ class Termianl:
         data = dict(sorted(data.items()))
         self.token = hashlib.sha256("".join(data.values()).encode("UTF-8")).hexdigest()
     
-    def cancel_deal():
-        pass
+    def cancel_deal(self, payment_id, amount):
+        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
+        return self._send_request('POST', 'Confirm', data, {"Amount" : amount})
+
+    def check_order(self, elid):
+        data = {"TerminalKey": self.terminalkey, "OrderId": elid}
+        return self._send_request('POST', 'CheckOrder', data)
 
     def confirm_deal(self, payment_id):
         data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}

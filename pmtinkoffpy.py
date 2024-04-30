@@ -67,23 +67,27 @@ class TinkoffPaymentModule(payment.PaymentModule):
     
     def RF_Set(self, xml: ET.ElementTree):
         logger.info("start refund process")
-        logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
         xml = xml.getroot()
         try:
             psw_node= xml.find('./xmlparams/terminalpsw')
             key_node= xml.find('./xmlparams/terminalkey')
+            elid_node = xml.find('./source_payment')
+            amount_node = xml.find('./payment_paymethodamount')
             psw = psw_node.text if psw_node is not None else ''
             key = key_node.text if key_node is not None else ''
+            elid = elid_node.text if elid_node is not None else ''
+            amount = amount_node.text if amount_node is not None else ''
+            logger.info(amount)
             terminal = Termianl(key, psw)
+            payment_id = terminal.check_order(f"external_{elid}")["Payments"]["PaymentId"]
+            terminal.cancel_deal(payment_id,str(float(amount)*-100))
         except:
             logger.info("test")
 
     def RF_Tune(self, xml):
-        logger.info("tune")
         return super().RF_Tune(xml)
 
     def RF_Validate(self, xml):
-        logger.info("validate")
         return super().RF_Validate(xml)
 
     # в тестовом примере получаем необходимые платежи
