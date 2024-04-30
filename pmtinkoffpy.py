@@ -79,6 +79,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value}
         ''')
 
+        logger.info(payments)
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
             logger.info(f"pmparams={p['paymethod']}")
