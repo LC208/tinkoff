@@ -32,6 +32,20 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         request_body["FailURL"] = self.fail_page
         headers = {"Content-Type":"application/json"}
         resp = requests.post(url="https://securepay.tinkoff.ru/v2/Init",json=request_body,headers=headers)
+
+        fail_form =  "<html>\n"
+        fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
+        fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
+        fail_form += "	<script language='JavaScript'>\n"
+        fail_form += "		function DoSubmit() {\n"
+        fail_form += "			window.location.assign('" + self.fail_page + "');\n"
+        fail_form += "		}\n"
+        fail_form += "	</script>\n"
+        fail_form += "</head>\n"
+        fail_form += "<body onload='DoSubmit()'>\n"
+        fail_form += "</body>\n"
+        fail_form += "</html>\n"
+
         if resp.status_code == 503:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         try: 
@@ -41,18 +55,21 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         
         if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
+            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         
         try:
             redirect_url = obj["PaymentURL"]
         except:
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
+            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_no_url_provided')
         
         try:
             payment.set_in_pay(self.elid, '',  obj["PaymentId"])
         except:
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
+            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
         
 
