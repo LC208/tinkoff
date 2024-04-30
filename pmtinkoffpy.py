@@ -114,6 +114,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
                 raise NotImplemented("test")
         except Exception as ex:
             logger.info(ex.args)
+            raise NotImplemented("test")
         
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
