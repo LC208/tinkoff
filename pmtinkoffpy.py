@@ -77,6 +77,8 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def RF_Validate(self, xml: ET.ElementTree):
         logger.info("validate data in refund form")
         logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
+        ET.dump(ET.Element('doc'))
+
     
 
 
