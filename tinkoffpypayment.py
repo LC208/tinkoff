@@ -40,7 +40,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         
-        if obj["ErrorCode"] == 202 or obj["ErrorCode"] == 331 or obj["ErrorCode"] == 501:
+        if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         
         try:
