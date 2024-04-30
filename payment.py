@@ -69,7 +69,7 @@ class Termianl:
         try: 
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
-            raise billmgr.exception.XmlException(resp.content.decode("UTF-8"),resp.content.decode("UTF-8"))
+            raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         
         if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
@@ -82,8 +82,8 @@ class Termianl:
         self.token = hashlib.sha256("".join(data.values()).encode("UTF-8")).hexdigest()
     
     def cancel_deal(self, payment_id, amount):
-        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
-        return self._send_request('POST', 'Cancel', data, {"Amount" : amount})
+        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id,"Amount" : amount}
+        return self._send_request('POST', 'Cancel', data)
 
     def check_order(self, elid):
         data = {"TerminalKey": self.terminalkey, "OrderId": elid}
