@@ -108,8 +108,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             key = key_node.text if key_node is not None else ''
             terminal = Termianl(key, psw)
             obj = terminal.get_state_deal(pm[0]['externalid'])
-            logger.info(obj["Success"])
-            logger.info(obj["Status"])
+            logger.info(obj["Success"] != 'true' or not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED'))
             if(obj["Success"] != 'true' or not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
                 raise NotImplemented("test")
         except Exception as ex:
