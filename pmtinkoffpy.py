@@ -69,7 +69,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def RF_Set(self, xml: ET.ElementTree):
         logger.info("start refund")
         xml = xml.getroot()
-        logger.info(ET.tostring(xml,encoding='unicode'))
         amount_node = xml.find('./payment_paymethodamount')
         psw_node= xml.find('./terminalpsw')
         key_node= xml.find('./terminalkey')
@@ -89,7 +88,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
         try:
             logger.info("test")
             xml = xml.getroot()
-            logger.info(ET.tostring(xml,encoding='unicode'))
             elid_node = xml.find('./source_payment')
             elid = elid_node.text if elid_node is not None else ''
             pm = billmgr.db.db_query(f'''
@@ -127,7 +125,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
         ''')
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
-            logger.info(f"pmparams={p['xmlparams']}")
             xml = ET.fromstring(p['xmlparams'])
             psw_node= xml.find('./terminalpsw')
             key_node= xml.find('./terminalkey')
