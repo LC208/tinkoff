@@ -24,8 +24,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_PMVALIDATE] = True
         self.features[payment.FEATURE_REFUND] = True
         self.features[payment.FEATURE_RFSET] = True
-        self.features[payment.FEATURE_RFVALIDATE] = True
-        self.features[payment.FEATURE_RFTUNE] = True
 
         self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
@@ -66,18 +64,19 @@ class TinkoffPaymentModule(payment.PaymentModule):
         if recurring != 'off':
             raise NotImplemented
 
-    def RF_Tune(self, xml : ET.ElementTree):
-        logger.info("open refund form")
-        print(ET.tostring(xml.getroot(),encoding="unicode"))
     
     def RF_Set(self, xml: ET.ElementTree):
         logger.info("start refund process")
         logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
-    
-    def RF_Validate(self, xml: ET.ElementTree):
-        logger.info("validate data in refund form")
-        logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
-        ET.dump(ET.Element('doc'))
+        xml = xml.getroot()
+        try:
+            psw_node= xml.find('./xmlparams/terminalpsw')
+            key_node= xml.find('./xmlparams/terminalkey')
+            psw = psw_node.text if psw_node is not None else ''
+            key = key_node.text if key_node is not None else ''
+            terminal = Termianl(key, psw)
+        except:
+            logger.info("test")
 
     
 
