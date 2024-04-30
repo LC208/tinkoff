@@ -21,14 +21,28 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         # здесь для примера выводим параметры метода оплаты (self.paymethod_params) и платежа (self.payment_params) в лог
         logger.info(f"procces pay")
         terminal = Termianl(self.paymethod_params["terminalkey"] ,self.paymethod_params["terminalpsw"] )
+
+        fail_form =  "<html>\n"
+        fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
+        fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
+        fail_form += "	<script language='JavaScript'>\n"
+        fail_form += "		function DoSubmit() {\n"
+        fail_form += "			window.location.assign('" + self.fail_page + "/billmgr?func=payment.fail"+ "');\n"
+        fail_form += "		}\n"
+        fail_form += "	</script>\n"
+        fail_form += "</head>\n"
+        fail_form += "<body onload='DoSubmit()'>\n"
+        fail_form += "</body>\n"
+        fail_form += "</html>\n"
         try:
             obj = terminal.init_deal(str(float(self.payment_params["paymethodamount"])*100), f"external_{self.elid}",self.success_page,self.fail_page)
             redirect_url = obj["PaymentURL"]
         except:
+            sys.stdout.write(fail_form)
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
         logger.info(f"set in pay")
         payment.set_in_pay(self.elid,'',f"external_{self.elid}")
-        
+
         payment_form =  "<html>\n"
         payment_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
         payment_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"

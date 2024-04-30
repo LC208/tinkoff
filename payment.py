@@ -52,43 +52,26 @@ class Termianl:
         try:
             obj["PaymentURL"]
         except:
-            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_no_url_provided')
         try:
             obj["PaymentId"]
         except:
-            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
         return obj
 
     def _send_request(self,method,command, main_param ={}, additional_param={}):
-        fail_form =  "<html>\n"
-        fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-        fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
-        fail_form += "	<script language='JavaScript'>\n"
-        fail_form += "		function DoSubmit() {\n"
-        fail_form += "			window.location.assign('" + "https://" + os.environ['HTTP_HOST'] + "/billmgr?func=payment.fail"+ "');\n"
-        fail_form += "		}\n"
-        fail_form += "	</script>\n"
-        fail_form += "</head>\n"
-        fail_form += "<body onload='DoSubmit()'>\n"
-        fail_form += "</body>\n"
-        fail_form += "</html>\n"
         self._generate_token(main_param)
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
         if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
-            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         
         if resp.status_code == 503:
-            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         
         try: 
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
-            sys.stdout.write(fail_form)
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         
         return obj
