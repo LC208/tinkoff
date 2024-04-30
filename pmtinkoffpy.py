@@ -67,7 +67,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             raise NotImplemented
 
     def RF_Tune(self, xml : ET.ElementTree):
-        return ET.tostring(xml.getroot(),encoding="unicode")
+        print(ET.tostring(xml.getroot(),encoding="unicode"))
     
     def RF_Set(self, xml: ET.ElementTree):
         xmlstr = ET.tostring(xml,encoding="unicode")
