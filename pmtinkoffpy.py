@@ -68,15 +68,15 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
     def RF_Tune(self, xml : ET.ElementTree):
         logger.info("RF_Tune")
-        logger.info(ET.tostring(xml,"UTF-8"))
+        logger.info(ET.tostring(xml,encoding="unicode"))
     
     def RF_Set(self, xml: ET.ElementTree):
         logger.info("RF_Set")
-        logger.info(ET.tostring(xml,"UTF-8"))
+        logger.info(ET.tostring(xml,encoding="unicode"))
     
     def RF_Validate(self, xml: ET.ElementTree):
         logger.info("RF_Validate")
-        logger.info(ET.tostring(xml,"UTF-8"))
+        logger.info(ET.tostring(xml,encoding="unicode"))
 
     
 
