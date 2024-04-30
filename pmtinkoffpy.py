@@ -67,16 +67,17 @@ class TinkoffPaymentModule(payment.PaymentModule):
             raise NotImplemented
 
     def RF_Tune(self, xml : ET.ElementTree):
-        logger.info("RF_Tune")
-        logger.info(ET.tostring(xml,encoding="unicode"))
+        xmlstr = ET.tostring(xml,encoding="unicode")
+        logger.info(xmlstr)
     
     def RF_Set(self, xml: ET.ElementTree):
-        logger.info("RF_Set")
-        logger.info(ET.tostring(xml,encoding="unicode"))
+        xmlstr = ET.tostring(xml,encoding="unicode")
+        logger.info(xmlstr)
     
     def RF_Validate(self, xml: ET.ElementTree):
         logger.info("RF_Validate")
-        logger.info(ET.tostring(xml,encoding="unicode"))
+        xmlstr = ET.tostring(xml,encoding="unicode")
+        logger.info(xmlstr)
 
     
 
