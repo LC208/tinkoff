@@ -77,7 +77,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             key = key_node.text if key_node is not None else ''
             elid = elid_node.text if elid_node is not None else ''
             amount = amount_node.text if amount_node is not None else ''
-            logger.info(elid)
+            logger.info(str(float(amount)*-100))
             terminal = Termianl(key, psw)
             #payment_id = terminal.check_order(f"external_{elid}")["Payments"][0]["PaymentId"]
             payment_id = "4338284581"
