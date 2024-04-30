@@ -69,7 +69,7 @@ class Termianl:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
 
         try:
-            logger.info(resp.status_code)
+            logger.info(resp.content.decode("UTF-8"))
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
