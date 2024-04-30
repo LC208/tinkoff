@@ -66,7 +66,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
     
     def RF_Set(self, xml: ET.ElementTree):
-        logger.info("start refund process")
+        logger.info("start refund")
         xml = xml.getroot()
         try:
             logger.info(ET.tostring(xml, encoding='unicode'))
@@ -75,8 +75,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             elid = elid_node.text if elid_node is not None else ''
             amount = amount_node.text if amount_node is not None else ''
             pm = billmgr.db.db_query(f'''
-            SELECT pm.xmlparams FROM paymethod pm
-            JOIN payment p
+            SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
             WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
             ''')
             xml = ET.fromstring(pm[0]['xmlparams'])
@@ -86,9 +85,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             key = key_node.text if key_node is not None else ''
             logger.info(key)
             terminal = Termianl(key, psw)
-            #payment_id = terminal.check_order(f"external_{elid}")["Payments"][0]["PaymentId"]
-            payment_id = "4338426213"
-            terminal.cancel_deal(payment_id,str(int(float(amount)*-100)))
+            terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
         except:
             logger.info("test")
 

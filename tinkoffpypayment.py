@@ -36,7 +36,6 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         fail_form += "</html>\n"
         try:
             obj = terminal.init_deal(str(int(float(self.payment_params["paymethodamount"])*100)), f"external_{self.elid}",self.success_page,self.fail_page)
-            logger.info(str(int(float(self.payment_params["paymethodamount"])*100)))
             redirect_url = obj["PaymentURL"]
         except Exception as err:
             logger.error(err.args)
