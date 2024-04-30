@@ -66,16 +66,20 @@ class TinkoffPaymentModule(payment.PaymentModule):
         if recurring != 'off':
             raise NotImplemented
 
-    def RF_Tune(self):
-        return super().RF_Tune()
+    def RF_Tune(self, xml : ET.ElementTree):
+        logger.info("RF_Tune")
+        logger.info(xml)
     
-    def RF_Set(self):
-        return super().RF_Set()
+    def RF_Set(self, xml: ET.ElementTree):
+        logger.info("RF_Set")
+        logger.info(xml)
     
-    def RF_Validate(self):
-        return super().RF_Validate()
+    def RF_Validate(self, xml: ET.ElementTree):
+        logger.info("RF_Validate")
+        logger.info(xml)
+
     
-    
+
 
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
