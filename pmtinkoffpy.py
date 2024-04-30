@@ -9,8 +9,6 @@ import billmgr.logger as logging
 import xml.etree.ElementTree as ET
 
 from payment import Termianl
-import json
-
 
 MODULE = 'payment'
 logging.init_logging('pmtinkoffpy')
@@ -82,22 +80,26 @@ class TinkoffPaymentModule(payment.PaymentModule):
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
             logger.info(f"pmparams={p['xmlparams']}")
-
-            #terminal = Termianl(key, psw)
-            #obj = terminal.get_state_deal(p["externalid"])
-            '''status = obj["Status"]
+            xml = ET.fromstring(p['xmlparams'])
+            psw_node= xml.find('./terminalpsw')
+            key_node= xml.find('./terminalkey')
+            psw = psw_node.text if psw_node is not None else ''
+            key = key_node.text if key_node is not None else ''
+            logger.info(psw+" "+key)
+            terminal = Termianl(key, psw)
+            obj = terminal.get_state_deal(p["externalid"])
+            status = obj["Status"]
             if status == "CONFIRMED":
                 payment.set_paid(p['id'], '', p['externalid'])
             elif status ==  "REJECTED":
                 payment.set_canceled(p['id'], '', p['externalid'])
                 raise billmgr.exception.XmlException('msg_error_status_rejected')
             elif status == "AUTHORIZED":
-                resp = terminal.confirm_deal(p['externalid'])
-                obj = json.loads(resp.content.decode("UTF-8"))
+                obj = terminal.confirm_deal(p['externalid'])
                 if obj["Status"] == "true":
                     logger.info(f"confirm authorized payment id: {p['id']}")
             else:
-                continue'''
+                continue
             
 
 
