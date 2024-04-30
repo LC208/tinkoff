@@ -70,14 +70,19 @@ class TinkoffPaymentModule(payment.PaymentModule):
         xml = xml.getroot()
         try:
             logger.info(ET.tostring(xml, encoding='unicode'))
-            psw_node= xml.find('./xmlparams/terminalpsw')
-            key_node= xml.find('./xmlparams/terminalkey')
             elid_node = xml.find('./source_payment')
             amount_node = xml.find('./payment_paymethodamount')
-            psw = psw_node.text if psw_node is not None else ''
-            key = key_node.text if key_node is not None else ''
             elid = elid_node.text if elid_node is not None else ''
             amount = amount_node.text if amount_node is not None else ''
+            pm = billmgr.db.db_query(f'''
+            SELECT pm.xmlparams FROM paymethod pm
+            WHERE pm.module = 'pmtinkoffpy' AND pm.id = {elid}
+            ''')
+            xml = ET.fromstring(pm['xmlparams'])
+            psw_node= xml.find('./terminalpsw')
+            key_node= xml.find('./terminalkey')
+            psw = psw_node.text if psw_node is not None else ''
+            key = key_node.text if key_node is not None else ''
             logger.info(key)
             terminal = Termianl(key, psw)
             #payment_id = terminal.check_order(f"external_{elid}")["Payments"][0]["PaymentId"]
@@ -101,7 +106,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         # и которые используют обработчик pmtestpayment
         payments = billmgr.db.db_query(f'''
             SELECT p.id, p.externalid, pm.xmlparams FROM payment p, paymethod pm
-            WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value} and p.paymethod = pm.id
+            WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value} AND p.paymethod = pm.id
         ''')
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
