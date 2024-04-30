@@ -80,13 +80,14 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
         terminal = Termianl(key, psw)
         terminal.cancel_deal(externalid,str(int(float(amount)*-100)))
+        logger.info("refunded")
 
     def RF_Tune(self, xml: ET.ElementTree):
         return super().RF_Tune(xml)
 
     def RF_Validate(self, xml: ET.ElementTree):
         try:
-            logger.info("test")
+            logger.info("validate refund form")
             xml = xml.getroot()
             elid_node = xml.find('./source_payment')
             elid = elid_node.text if elid_node is not None else ''
