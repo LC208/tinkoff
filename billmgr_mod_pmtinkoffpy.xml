@@ -19,6 +19,11 @@
 					<input type="password" name="terminalpsw" private="yes" required="yes"/>
 				</field>
 			</page>
+			<page name="refundpage">
+				<field name="allowrefund">
+					<input type="checkbox" name="allowrefund"/>
+				</field>
+			</page>
 		</form>
 	</metadata>
 

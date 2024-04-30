@@ -214,7 +214,7 @@ FEATURE_NOT_PROFILE = "notneedprofile"      # оплата без платель
 FEATURE_PMVALIDATE = "pmvalidate"           # проверка введённых данных на форме создания платежной системы
 FEATURE_PMUSERCREATE = "pmusercreate"       # для ссылки на регистрацию в платежке
 FEATURE_REFUND = "refund"
-#FEATURE_RFTUNE = "rftune"
+FEATURE_RFTUNE = "rftune"
 FEATURE_RFVALIDATE = "rfvalidate"
 FEATURE_RFSET = "rfset"
 # параметры платежного модуля
@@ -241,6 +241,18 @@ class PaymentModule(ABC):
     # если все значение валидны, то ничего не возвращаем, исключений не бросаем
     @abstractmethod
     def PM_Validate(self, xml):
+        pass
+
+    @abstractmethod
+    def RF_Tune(self, xml):
+        pass
+
+    @abstractmethod
+    def RF_Validate(self, xml):
+        pass
+
+    @abstractmethod
+    def RF_Set(self, xml):
         pass
 
     def __init__(self):
@@ -283,6 +295,12 @@ class PaymentModule(ABC):
 
             elif command == FEATURE_CHECKPAY:
                 self.CheckPay()
+            elif command == FEATURE_RFTUNE:
+                self.RF_Tune(ET.parse(sys.stdin))
+            elif command == FEATURE_RFSET:
+                self.RF_Set(ET.parse(sys.stdin))
+            elif command == FEATURE_RFVALIDATE:
+                self.RF_Validate(ET.parse(sys.stdin))
 
         except billmgr.exception.XmlException as exception:
             sys.stdout.write(exception.as_xml())

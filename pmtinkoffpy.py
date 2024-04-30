@@ -25,7 +25,8 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_REFUND] = True
         self.features[payment.FEATURE_RFSET] = True
         self.features[payment.FEATURE_RFVALIDATE] = True
-        
+        self.features[payment.FEATURE_RFTUNE] = True
+
         self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
 
@@ -65,7 +66,16 @@ class TinkoffPaymentModule(payment.PaymentModule):
         if recurring != 'off':
             raise NotImplemented
 
-
+    def RF_Tune(self):
+        return super().RF_Tune()
+    
+    def RF_Set(self):
+        return super().RF_Set()
+    
+    def RF_Validate(self):
+        return super().RF_Validate()
+    
+    
 
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
