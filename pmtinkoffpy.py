@@ -90,25 +90,28 @@ class TinkoffPaymentModule(payment.PaymentModule):
         return super().RF_Tune(xml)
 
     def RF_Validate(self, xml: ET.ElementTree):
-        logger.info("test")
-        xml = xml.getroot()
-        elid_node = xml.find('./source_payment')
-        amount_node = xml.find('./payment_paymethodamount')
-        elid = elid_node.text if elid_node is not None else ''
-        amount = amount_node.text if amount_node is not None else ''
-        pm = billmgr.db.db_query(f'''
-        SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
-        WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
-        ''')
-        xml = ET.fromstring(pm[0]['xmlparams'])
-        psw_node= xml.find('./terminalpsw')
-        key_node= xml.find('./terminalkey')
-        psw = psw_node.text if psw_node is not None else ''
-        key = key_node.text if key_node is not None else ''
-        terminal = Termianl(key, psw)
-        obj = terminal.get_state_deal(pm[0]['externalid'])
-        if(obj["Success"] != 'true' or obj["Status"] != 'CONFIRMED' or obj["Status"] != 'AUTHORIZED'):
-            raise NotImplemented
+        try:
+            logger.info("test")
+            xml = xml.getroot()
+            elid_node = xml.find('./source_payment')
+            amount_node = xml.find('./payment_paymethodamount')
+            elid = elid_node.text if elid_node is not None else ''
+            amount = amount_node.text if amount_node is not None else ''
+            pm = billmgr.db.db_query(f'''
+            SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
+            WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
+            ''')
+            xml = ET.fromstring(pm[0]['xmlparams'])
+            psw_node= xml.find('./terminalpsw')
+            key_node= xml.find('./terminalkey')
+            psw = psw_node.text if psw_node is not None else ''
+            key = key_node.text if key_node is not None else ''
+            terminal = Termianl(key, psw)
+            obj = terminal.get_state_deal(pm[0]['externalid'])
+            if(obj["Success"] != 'true' or obj["Status"] != 'CONFIRMED' or obj["Status"] != 'AUTHORIZED'):
+                raise NotImplemented("test")
+        except Exception as ex:
+            logger.info(ex.args)
         
     # в тестовом примере получаем необходимые платежи
     # и переводим их все в статус 'оплачен'
