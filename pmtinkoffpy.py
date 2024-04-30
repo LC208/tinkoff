@@ -67,12 +67,15 @@ class TinkoffPaymentModule(payment.PaymentModule):
             raise NotImplemented
 
     def RF_Tune(self, xml : ET.ElementTree):
+        logger.info("open refund form")
         print(ET.tostring(xml.getroot(),encoding="unicode"))
     
     def RF_Set(self, xml: ET.ElementTree):
+        logger.info("start refund process")
         logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
     
     def RF_Validate(self, xml: ET.ElementTree):
+        logger.info("validate data in refund form")
         logger.info(ET.tostring(xml.getroot(),encoding="unicode"))
         print()
 
