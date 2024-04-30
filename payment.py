@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 import requests
 import hashlib
 import json
-
+import billmgr.logger as logging
 MODULE = 'payment'
 
 
@@ -38,6 +38,8 @@ INIT = "Init"
 CONFIRM = "Confirm"
 
 
+logging.init_logging('paymentmodule')
+logger = logging.get_logger('paymentmodule')
 
 class Termianl:
 
@@ -66,7 +68,8 @@ class Termianl:
         if resp.status_code == 503:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
 
-        try: 
+        try:
+            logger.info(resp.content.decode("UTF-8"))
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
