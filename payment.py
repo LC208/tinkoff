@@ -12,7 +12,6 @@ import xml.etree.ElementTree as ET
 MODULE = 'payment'
 
 
-
 def get_token(request, pswd):
     token_body = request.copy()
     token_body["Password"]=pswd
