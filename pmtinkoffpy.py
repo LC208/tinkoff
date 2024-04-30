@@ -78,10 +78,11 @@ class TinkoffPaymentModule(payment.PaymentModule):
             JOIN paymethod pm
             WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value}
         ''')
-        
+
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
-            logger.info(f"pmparams={p}")
+            logger.info(f"pmparams={p['paymethod']}")
+
             #terminal = Termianl(key, psw)
             #obj = terminal.get_state_deal(p["externalid"])
             '''status = obj["Status"]
