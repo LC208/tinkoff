@@ -63,16 +63,20 @@ class Termianl:
         self._generate_token(main_param)
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
-        if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
-            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
-        
         if resp.status_code == 503:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
-        
+
         try: 
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
+        
+        if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
+            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
+        
+
+        
+
         
         return obj
 
