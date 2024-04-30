@@ -68,7 +68,8 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
     def RF_Tune(self, xml : ET.ElementTree):
         try:
-            xmlstr = ET.tostring(xml,encoding="unicode")
+            xmlstr = ET.tostring(xml.getroot(),encoding="unicode")
+            logger.info(xmlstr)
         except Exception as ex:
             logger.info(ex.args)
     
