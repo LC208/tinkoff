@@ -74,9 +74,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         logger.info(xmlstr)
     
     def RF_Validate(self, xml: ET.ElementTree):
-        logger.info("RF_Validate")
-        xmlstr = ET.tostring(xml,encoding="unicode")
-        logger.info(xmlstr)
+        print()
 
     
 
