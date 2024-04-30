@@ -81,7 +81,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
-            logger.info(f"pmparams{p["xmlparams"]}")
+            logger.info(f"pmparams={p}")
             #terminal = Termianl(key, psw)
             #obj = terminal.get_state_deal(p["externalid"])
             '''status = obj["Status"]
