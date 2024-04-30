@@ -79,7 +79,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             amount = amount_node.text if amount_node is not None else ''
             logger.info(amount)
             terminal = Termianl(key, psw)
-            payment_id = terminal.check_order(f"external_{elid}")["Payments"]["PaymentId"]
+            payment_id = terminal.check_order(f"external_{elid}")["Payments"][0]["PaymentId"]
             terminal.cancel_deal(payment_id,str(float(amount)*-100))
         except:
             logger.info("test")
