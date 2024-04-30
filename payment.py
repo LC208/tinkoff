@@ -8,18 +8,12 @@ import billmgr.exception
 from enum import Enum
 import sys
 import xml.etree.ElementTree as ET
+import requests
+import hashlib
+import json
 
 MODULE = 'payment'
 
-
-def get_token(request, pswd):
-    token_body = request.copy()
-    token_body["Password"]=pswd
-    token_body = dict(sorted(token_body.items()))
-    token = ""
-    for v in [*token_body.values()]:
-        token+=v
-    return token
 
 def parse_cookies(rawdata):
     from http.cookies import SimpleCookie
@@ -36,6 +30,84 @@ class PaymentStatus(Enum):
     PAID = 4
     FRAUD = 7
     CANCELED = 9
+
+
+TINKOFF_URL = "https://securepay.tinkoff.ru/v2/"
+GET_STATE = "GetState"
+INIT = "Init"
+CONFIRM = "Confirm"
+
+fail_form =  "<html>\n"
+fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
+fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
+fail_form += "	<script language='JavaScript'>\n"
+fail_form += "		function DoSubmit() {\n"
+fail_form += "			window.location.assign('" + "https://" + os.environ['HTTP_HOST'] + "/billmgr?func=payment.fail"+ "');\n"
+fail_form += "		}\n"
+fail_form += "	</script>\n"
+fail_form += "</head>\n"
+fail_form += "<body onload='DoSubmit()'>\n"
+fail_form += "</body>\n"
+fail_form += "</html>\n"
+
+class Termianl:
+
+    def __init__(self, terminalkey, terminalpsw):
+        self.terminalkey = terminalkey
+        self.terminalpsw = terminalpsw
+        self.BASE_URL = TINKOFF_URL
+
+    def init_deal(self,amount, elid,success_page="", fail_page=""):
+        data = {"TerminalKey": self.terminalkey, "OrderId": elid, "Amount": amount}
+        obj = self._send_request('POST', 'Init', data,{"SuccessURL":success_page, "FailURL" : fail_page})
+        try:
+            obj["PaymentURL"]
+        except:
+            sys.stdout.write(fail_form)
+            raise billmgr.exception.XmlException('msg_error_no_url_provided')
+        try:
+            obj["PaymentId"]
+        except:
+            sys.stdout.write(fail_form)
+            raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
+        return obj
+
+    def _send_request(self,method,command, main_param ={}, additional_param={}):
+        self._generate_token(main_param)
+        main_param["Token"] = self.token
+        resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
+        if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
+            sys.stdout.write(fail_form)
+            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
+        
+        if resp.status_code == 503:
+            sys.stdout.write(fail_form)
+            raise billmgr.exception.XmlException('msg_error_repeat_again')
+        
+        try: 
+            obj = json.loads(resp.content.decode("UTF-8"))
+        except:
+            sys.stdout.write(fail_form)
+            raise billmgr.exception.XmlException('msg_error_json_parsing_error')
+        
+        return obj
+
+    def _generate_token(self, data):
+        data = data.copy()
+        data["Password"]=self.terminalpsw
+        data = dict(sorted(data.items()))
+        self.token = hashlib.sha256("".join(data.values()).encode("UTF-8")).hexdigest()
+    
+    def cancel_deal():
+        pass
+
+    def confirm_deal(self, payment_id):
+        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
+        return self._send_request('POST', 'Confirm', data)
+
+    def get_state_deal(self, payment_id):
+        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
+        return self._send_request('POST', 'GetState', data)
 
 
 # перевести платеж в статус "оплачивается"

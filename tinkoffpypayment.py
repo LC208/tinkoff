@@ -5,9 +5,9 @@ import sys
 
 import billmgr.logger as logging
 import billmgr
-import json
-import requests
-import hashlib
+
+from payment import Termianl
+
 
 
 MODULE = 'payment'
@@ -20,62 +20,15 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         # необходимые данные достаем из self.payment_params, self.paymethod_params, self.user_params
         # здесь для примера выводим параметры метода оплаты (self.paymethod_params) и платежа (self.payment_params) в лог
         logger.info(f"procces pay")
-        logger.info(f"paymethod_params={self.paymethod_params}")
-        logger.info(f"payment_params={self.payment_params}")
-        request_body={}
-        request_body["TerminalKey"] = self.paymethod_params["terminalkey"] 
-        request_body["Amount"]  =  str(float(self.payment_params["paymethodamount"])*100) # для перевода в копейки
-        request_body["OrderId"] = f"external_{self.elid}"
-        request_body["Description"] =  self.payment_params["description"]
-        request_body["Token"] = hashlib.sha256(payment.get_token(request_body, self.paymethod_params['terminalpsw']).encode("UTF-8")).hexdigest()
-        request_body["SuccessURL"] = self.success_page
-        request_body["FailURL"] = self.fail_page
-        headers = {"Content-Type":"application/json"}
-        resp = requests.post(url="https://securepay.tinkoff.ru/v2/Init",json=request_body,headers=headers)
-
-        fail_form =  "<html>\n"
-        fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-        fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
-        fail_form += "	<script language='JavaScript'>\n"
-        fail_form += "		function DoSubmit() {\n"
-        fail_form += "			window.location.assign('" + self.fail_page + "');\n"
-        fail_form += "		}\n"
-        fail_form += "	</script>\n"
-        fail_form += "</head>\n"
-        fail_form += "<body onload='DoSubmit()'>\n"
-        fail_form += "</body>\n"
-        fail_form += "</html>\n"
-
-        if resp.status_code == 503:
-            raise billmgr.exception.XmlException('msg_error_repeat_again')
-        try: 
-            obj = json.loads(resp.content.decode("UTF-8"))
-        except:
-            raise billmgr.exception.XmlException('msg_error_json_parsing_error')
-        
-        if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
-            payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
-            sys.stdout.write(fail_form)
-            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
-        
+        terminal = Termianl(self.paymethod_params["terminalkey"] ,self.paymethod_params["terminalpsw"] )
         try:
+            obj = terminal.init_deal(str(float(self.payment_params["paymethodamount"])*100), f"external_{self.elid}",self.success_page,self.fail_page)
             redirect_url = obj["PaymentURL"]
         except:
             payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
-            sys.stdout.write(fail_form)
-            raise billmgr.exception.XmlException('msg_error_no_url_provided')
-        
-        try:
-            payment.set_in_pay(self.elid, '',  obj["PaymentId"])
-        except:
-            payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
-            sys.stdout.write(fail_form)
-            raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
-        
-
-
         logger.info(f"set in pay")
-
+        payment.set_in_pay(self.elid,'',f"external_{self.elid}")
+        
         payment_form =  "<html>\n"
         payment_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
         payment_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
