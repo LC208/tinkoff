@@ -68,15 +68,15 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
     def RF_Tune(self, xml : ET.ElementTree):
         logger.info("RF_Tune")
-        logger.info(xml)
+        logger.info(xml.getroot())
     
     def RF_Set(self, xml: ET.ElementTree):
         logger.info("RF_Set")
-        logger.info(xml)
+        logger.info(xml.getroot())
     
     def RF_Validate(self, xml: ET.ElementTree):
         logger.info("RF_Validate")
-        logger.info(xml)
+        logger.info(xml.getroot())
 
     
 
@@ -92,8 +92,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
             SELECT p.id, p.externalid, pm.xmlparams FROM payment p, paymethod pm
             WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value} and p.paymethod = pm.id
         ''')
-
-        logger.info(payments)
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
             logger.info(f"pmparams={p['xmlparams']}")
