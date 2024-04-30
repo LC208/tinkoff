@@ -78,7 +78,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             SELECT pm.xmlparams FROM paymethod pm
             WHERE pm.module = 'pmtinkoffpy' AND pm.id = {elid}
             ''')
-            xml = ET.fromstring(pm['xmlparams'])
+            xml = ET.fromstring(pm[0]['xmlparams'])
             psw_node= xml.find('./terminalpsw')
             key_node= xml.find('./terminalkey')
             psw = psw_node.text if psw_node is not None else ''
