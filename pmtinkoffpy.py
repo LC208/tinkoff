@@ -69,6 +69,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
     def RF_Set(self, xml: ET.ElementTree):
         logger.info("start refund")
         xml = xml.getroot()
+        logger.info(ET.tostring(xml,encoding='unicode'))
         elid_node = xml.find('./source_payment')
         amount_node = xml.find('./payment_paymethodamount')
         elid = elid_node.text if elid_node is not None else ''
