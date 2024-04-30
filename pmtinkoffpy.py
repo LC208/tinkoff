@@ -87,7 +87,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             key = key_node.text if key_node is not None else ''
             terminal = Termianl(key, psw)
             obj = terminal.get_state_deal(p["externalid"])
-            logger.info(obj)
+            logger.info(p["externalid"])
             status = obj["Status"]
             if status == "CONFIRMED":
                 payment.set_paid(p['id'], '', p['externalid'])
