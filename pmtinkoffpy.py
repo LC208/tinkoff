@@ -96,9 +96,9 @@ class TinkoffPaymentModule(payment.PaymentModule):
             SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
             WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
             ''')
-            xml = ET.fromstring(pm[0]['xmlparams'])
-            psw_node= xml.find('./terminalpsw')
-            key_node= xml.find('./terminalkey')
+            xml1 = ET.fromstring(pm[0]['xmlparams'])
+            psw_node= xml1.find('./terminalpsw')
+            key_node= xml1.find('./terminalkey')
             psw = psw_node.text if psw_node is not None else ''
             key = key_node.text if key_node is not None else ''
             terminal = Termianl(key, psw)
