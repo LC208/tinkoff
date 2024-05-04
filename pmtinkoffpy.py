@@ -24,7 +24,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
         self.features[payment.FEATURE_PMVALIDATE] = True
         self.features[payment.FEATURE_REFUND] = True
         self.features[payment.FEATURE_RFSET] = True
-        self.features[payment.FEATURE_RFVALIDATE] = True
+        #self.features[payment.FEATURE_RFVALIDATE] = True
 
         self.params[payment.PAYMENT_PARAM_PAYMENT_SCRIPT] = "/mancgi/tinkoffpypayment"
 
