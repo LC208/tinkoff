@@ -57,50 +57,38 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
     
     def RF_Set(self, xml: ET.ElementTree):
-        logger.info("start refund")
-        xml = xml.getroot()
-        amount_node = xml.find('./payment_paymethodamount')
-        psw_node= xml.find('./terminalpsw')
-        key_node= xml.find('./terminalkey')
-        externalid_node = xml.find('./externalid')
-        externalid = externalid_node.text if externalid_node is not None else ''
-        psw = psw_node.text if psw_node is not None else ''
-        key = key_node.text if key_node is not None else ''
-        amount = amount_node.text if amount_node is not None else ''
-
-        terminal = Termianl(key, psw)
-        terminal.cancel_deal(externalid,str(int(float(amount)*-100)))
-        logger.info("refunded")
-
-    def RF_Tune(self, xml: ET.ElementTree):
-        return super().RF_Tune(xml)
-
-    def RF_Validate(self, xml: ET.ElementTree):
         try:
-            logger.info("validate refund form")
+            logger.info("start refund")
             xml = xml.getroot()
+
             elid_node = xml.find('./source_payment')
+            amount_node = xml.find('./payment_paymethodamount')
+
+            amount = amount_node.text if amount_node is not None else ''
             elid = elid_node.text if elid_node is not None else ''
             pm = billmgr.db.db_query(f'''
             SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
-            WHERE pm.module = 'pmtinkoffpy' AND p.id = {elid} AND p.paymethod = pm.id
-            ''')
+            WHERE pm.module = 'pmtinkoffpy' AND p.id = % AND p.paymethod = pm.id
+            ''', elid)
+
             xml1 = ET.fromstring(pm[0]['xmlparams'])
             psw_node= xml1.find('./terminalpsw')
             key_node= xml1.find('./terminalkey')
+
             psw = psw_node.text if psw_node is not None else ''
             key = key_node.text if key_node is not None else ''
+
             terminal = Termianl(key, psw)
             obj = terminal.get_state_deal(pm[0]['externalid'])
             if(obj["ErrorCode"] != '0' or not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
                 raise NotImplemented
-            ET.SubElement(xml,"terminalpsw").text = psw
-            ET.SubElement(xml,"terminalkey").text = key
-            ET.SubElement(xml,"externalid").text = pm[0]['externalid']
-            ET.dump(xml)
+
+            terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
+            logger.info("refunded")
         except Exception as ex:
             logger.info(ex.args)
             raise NotImplemented
+
         
         
     # в тестовом примере получаем необходимые платежи
