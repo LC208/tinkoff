@@ -99,9 +99,12 @@ class TinkoffPaymentModule(payment.PaymentModule):
         # получаем список платежей в статусе оплачивается
         # и которые используют обработчик pmtestpayment
         payments = billmgr.db.db_query(f'''
-            SELECT p.id, p.externalid, pm.xmlparams FROM payment p, paymethod pm
+            SELECT p.id, p.externalid, p.createdate ,pm.xmlparams FROM payment p, paymethod pm
             WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value} AND p.paymethod = pm.id
+            ORDER BY p.createdate DESC
+            LIMIT 5
         ''')
+        logger.info(payments)
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
             xml = ET.fromstring(p['xmlparams'])
