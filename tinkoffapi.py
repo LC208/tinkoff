@@ -42,7 +42,7 @@ class Termianl:
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
         if resp.status_code == 503:
-            logger.info(1)
+            logger.info(1111)
             logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         try:
@@ -60,6 +60,7 @@ class Termianl:
             logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_payment_fraud')
         if obj["ErrorCode"] != "0":
+            logger.info(5)
             logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_unknown_error')
         return obj
