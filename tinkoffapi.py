@@ -91,5 +91,7 @@ class Termianl:
         return self._send_request('POST', ADDCUSTOMER, data)
 
     def get_state_deal(self, payment_id):
+        logger.info(1111)
         data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
+        logger.info(1111)
         return self._send_request('POST', GET_STATE, data)
