@@ -84,6 +84,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
                 raise NotImplemented
 
+            logger.info(1)
             terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
             logger.info("refunded")
         except Exception as ex:
