@@ -8,11 +8,9 @@ import billmgr.exception
 from enum import Enum
 import sys
 import xml.etree.ElementTree as ET
-import requests
-import hashlib
-import json
 import billmgr.logger as logging
-MODULE = 'payment'
+
+MODULE = 'paymentmodule'
 
 
 def parse_cookies(rawdata):
@@ -32,73 +30,8 @@ class PaymentStatus(Enum):
     CANCELED = 9
 
 
-TINKOFF_URL = "https://securepay.tinkoff.ru/v2/"
-GET_STATE = "GetState"
-INIT = "Init"
-CONFIRM = "Confirm"
-
-
-logging.init_logging('paymentmodule')
-logger = logging.get_logger('paymentmodule')
-
-class Termianl:
-
-    def __init__(self, terminalkey, terminalpsw):
-        self.terminalkey = terminalkey
-        self.terminalpsw = terminalpsw
-        self.BASE_URL = TINKOFF_URL
-
-    def init_deal(self,amount, elid,success_page="", fail_page=""):
-        data = {"TerminalKey": self.terminalkey, "OrderId": elid, "Amount": amount}
-        obj = self._send_request('POST', 'Init', data,{"SuccessURL":success_page, "FailURL" : fail_page})
-        try:
-            obj["PaymentURL"]
-        except:
-            raise billmgr.exception.XmlException('msg_error_no_url_provided')
-        try:
-            obj["PaymentId"]
-        except:
-            raise billmgr.exception.XmlException('msg_error_no_payment_id_provided')
-        return obj
-
-    def _send_request(self,method,command, main_param ={}, additional_param={}):
-        self._generate_token(main_param)
-        main_param["Token"] = self.token
-        resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
-        if resp.status_code == 503:
-            raise billmgr.exception.XmlException('msg_error_repeat_again')
-
-        try:
-            logger.info(resp.content.decode("UTF-8"))
-            obj = json.loads(resp.content.decode("UTF-8"))
-        except:
-            raise billmgr.exception.XmlException('msg_error_json_parsing_error')
-        
-        if obj["ErrorCode"] == "202" or obj["ErrorCode"] == "331" or obj["ErrorCode"] == "501":
-            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
-        return obj
-
-    def _generate_token(self, data):
-        data = data.copy()
-        data["Password"]=self.terminalpsw
-        data = dict(sorted(data.items()))
-        self.token = hashlib.sha256("".join(data.values()).encode("UTF-8")).hexdigest()
-    
-    def cancel_deal(self, payment_id, amount):
-        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id,"Amount" : amount}
-        return self._send_request('POST', 'Cancel', data)
-
-    def check_order(self, elid):
-        data = {"TerminalKey": self.terminalkey, "OrderId": elid}
-        return self._send_request('POST', 'CheckOrder', data)
-
-    def confirm_deal(self, payment_id):
-        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
-        return self._send_request('POST', 'Confirm', data)
-
-    def get_state_deal(self, payment_id):
-        data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
-        return self._send_request('POST', 'GetState', data)
+logging.init_logging(MODULE)
+logger = logging.get_logger(MODULE)
 
 
 # перевести платеж в статус "оплачивается"

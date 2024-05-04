@@ -8,11 +8,11 @@ import billmgr.logger as logging
 
 import xml.etree.ElementTree as ET
 
-from payment import Termianl
+from tinkoffapi import Termianl
 
-MODULE = 'payment'
-logging.init_logging('pmtinkoffpy')
-logger = logging.get_logger('pmtinkoffpy')
+MODULE = 'pmtinkoffpy'
+logging.init_logging(MODULE)
+logger = logging.get_logger(MODULE)
 
 class TinkoffPaymentModule(payment.PaymentModule):
     def __init__(self):
@@ -35,20 +35,14 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
         currency_node = xml.find('./paymethod/currency')
         minamount_node = xml.find('./paymethod/minamount')
-        commissionamount_node = xml.find('./paymethod/commissionamount')
-        commissionpercent_node = xml.find('./paymethod/commissionpercent')
-        recurring_node= xml.find('./paymethod/recurring')
-        #psw_node= xml.find('./terminalpsw')
-        #key_node= xml.find('./terminalkey')
+        psw_node= xml.find('./terminalpsw')
+        key_node= xml.find('./terminalkey')
 
         currency = currency_node.text if currency_node is not None else ''
         minamount= minamount_node.text if minamount_node is not None else ''
-        commissionamount= commissionamount_node.text if commissionamount_node is not None else ''
-        commissionpercent= commissionpercent_node.text if commissionpercent_node is not None else ''
-        recurring= recurring_node.text if recurring_node is not None else ''
-        #psw = psw_node.text if psw_node is not None else ''
-        #key = key_node.text if key_node is not None else ''
-        #TERMINAL = Termianl(key, psw)
+        psw = psw_node.text if psw_node is not None else ''
+        key = key_node.text if key_node is not None else ''
+        terminal = Termianl(key, psw)
 
         if float(minamount) < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
@@ -56,14 +50,10 @@ class TinkoffPaymentModule(payment.PaymentModule):
         if currency != "126":
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
-        if float(commissionamount) < 0:
-            raise NotImplemented
+        obj = terminal.init_deal("1000","TinkoffBankTest")
+        if obj["ErrorCode"] in ('60','66','202','205','331','501'):
+            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         
-        if float(commissionpercent) < 0:
-            raise NotImplemented
-        
-        if recurring != 'off':
-            raise NotImplemented
 
     
     def RF_Set(self, xml: ET.ElementTree):

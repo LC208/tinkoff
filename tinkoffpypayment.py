@@ -10,9 +10,9 @@ from payment import Termianl
 
 
 
-MODULE = 'payment'
-logging.init_logging('tinkoffpypayment')
-logger = logging.get_logger('tinkoffpypayment')
+MODULE = 'tinkoffpypayment'
+logging.init_logging(MODULE)
+logger = logging.get_logger(MODULE)
 
 class TinkoffPaymentCgi(payment.PaymentCgi):
 
