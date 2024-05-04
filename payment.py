@@ -150,8 +150,6 @@ FEATURE_NOT_PROFILE = "notneedprofile"      # оплата без платель
 FEATURE_PMVALIDATE = "pmvalidate"           # проверка введённых данных на форме создания платежной системы
 FEATURE_PMUSERCREATE = "pmusercreate"       # для ссылки на регистрацию в платежке
 FEATURE_REFUND = "refund"
-#FEATURE_RFTUNE = "rftune"
-#FEATURE_RFVALIDATE = "rfvalidate"
 FEATURE_RFSET = "rfset"
 # параметры платежного модуля
 PAYMENT_PARAM_PAYMENT_SCRIPT = "payment_script" # mancgi/<наименование cgi скрипта>
@@ -220,7 +218,6 @@ class PaymentModule(ABC):
                 raise Exception("invalid_arguments")
 
             command = sys.argv[2]
-            logger.info(f"sys input: {ET.tostring(ET.parse(sys.stdin).getroot,'unicode')}")
 
             if command == "config":
                 xml = self.Config()
@@ -237,6 +234,7 @@ class PaymentModule(ABC):
             # elif command == FEATURE_RFVALIDATE:
             #     self.RF_Validate(ET.parse(sys.stdin))
             elif command == FEATURE_RFSET:
+                logger.info(f"sys input: {ET.tostring(ET.parse(sys.stdin).getroot,'unicode')}")
                 self.RF_Set(ET.parse(sys.stdin))
 
 
