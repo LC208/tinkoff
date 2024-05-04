@@ -87,7 +87,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
             logger.info("refunded")
         except Exception as ex:
-            logger.info(ex.args)
+            logger.info(ex)
             raise NotImplemented
 
         
