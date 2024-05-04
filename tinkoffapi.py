@@ -52,7 +52,8 @@ class Termianl:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         if obj["ErrorCode"] in TERMINAL_ACCES_ERORS:
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
-        if obj["ErrorCode"] == "3003":
+        #Коды ошибок тинькофф https://www.tinkoff.ru/kassa/dev/payments/index.html#tag/Kody-oshibok
+        if obj["ErrorCode"] == "3003" or obj["ErrorCode"] == "102":
             raise billmgr.exception.XmlException('msg_error_payment_fraud')
         if obj["ErrorCode"] != "0":
             raise billmgr.exception.XmlException('msg_error_unknown_error')

@@ -7,7 +7,7 @@ import sys
 import billmgr.logger as logging
 import billmgr
 
-from payment import Termianl
+from tinkoffapi import Termianl
 
 
 
@@ -48,9 +48,6 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         except Exception as err:
             logger.error(err.args)
             sys.stdout.write(fail_form)
-        
-
-
         payment_form =  "<html>\n"
         payment_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
         payment_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
