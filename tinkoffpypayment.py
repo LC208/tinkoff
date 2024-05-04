@@ -18,10 +18,10 @@ logging.init_logging(MODULE)
 logger = logging.get_logger(MODULE)
 
 env = Environment(
-    loader=FileSystemLoader('.'),
+    loader=FileSystemLoader('/usr/local'),
     autoescape=select_autoescape(['html'])
 )
-template = env.get_template('./template.html')
+template = env.get_template('template.html')
 
 class TinkoffPaymentCgi(payment.PaymentCgi):
 
