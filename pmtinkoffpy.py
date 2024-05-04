@@ -80,11 +80,12 @@ class TinkoffPaymentModule(payment.PaymentModule):
             key = key_node.text if key_node is not None else ''
 
             terminal = Termianl(key, psw)
+            logger.info(1)
             obj = terminal.get_state_deal(pm[0]['externalid'])
             if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
                 raise NotImplemented
 
-            logger.info(1)
+            
             terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
             logger.info("refunded")
         except Exception as ex:
