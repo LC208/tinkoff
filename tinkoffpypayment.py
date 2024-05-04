@@ -21,7 +21,7 @@ env = Environment(
     loader=FileSystemLoader('.'),
     autoescape=select_autoescape(['html'])
 )
-template = env.get_template('template.html')
+template = env.get_template('./template.html')
 
 class TinkoffPaymentCgi(payment.PaymentCgi):
 
