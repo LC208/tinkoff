@@ -38,6 +38,7 @@ class Termianl:
         return obj
 
     def _send_request(self,method,command, main_param ={}, additional_param={}):
+        logger.info(1111)
         self._generate_token(main_param)
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
