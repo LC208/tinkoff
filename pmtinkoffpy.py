@@ -9,7 +9,6 @@ import billmgr.logger as logging
 import xml.etree.ElementTree as ET
 
 from tinkoffapi import Termianl
-from tinkoffapi import TERMINAL_ACCES_ERORS
 
 MODULE = 'pmtinkoffpy'
 logging.init_logging(MODULE)
@@ -44,14 +43,16 @@ class TinkoffPaymentModule(payment.PaymentModule):
         key = key_node.text if key_node is not None else ''
         terminal = Termianl(key, psw)
 
+        logger.info(f"validate minamount: {minamount}")
         if float(minamount) < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
 
         #126 - рубли
+        logger.info(f"validate currency: {currency}")
         if currency != "126":
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
-
+        logger.info("validate terminal info")
         terminal.init_deal("1000","TinkoffBankTest")
 
         
@@ -66,23 +67,26 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
             amount = amount_node.text if amount_node is not None else ''
             elid = elid_node.text if elid_node is not None else ''
+
             logger.info(f"start refund for payment {elid}")
             pm = billmgr.db.db_query(f'''
             SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
             WHERE pm.module = 'pmtinkoffpy' AND p.id = %s AND p.paymethod = pm.id
             ''', elid)
-
+            
             xml1 = ET.fromstring(pm[0]['xmlparams'])
             psw_node= xml1.find('./terminalpsw')
             key_node= xml1.find('./terminalkey')
-
+        
             psw = psw_node.text if psw_node is not None else ''
             key = key_node.text if key_node is not None else ''
-
+            
             terminal = Termianl(key, psw)
+            logger.info("getting state of deal")
             obj = terminal.get_state_deal(pm[0]['externalid'])
             if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED' or obj["Status"] == "PARTIAL_REFUNDED")):
                 raise NotImplemented
+            logger.info("refunding deal in bank")
             terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
             logger.info("refunded")
         except Exception as ex:
@@ -102,7 +106,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
             SELECT p.id, p.externalid, p.createdate ,pm.xmlparams FROM payment p, paymethod pm
             WHERE pm.module = 'pmtinkoffpy' AND p.status = {payment.PaymentStatus.INPAY.value} AND p.paymethod = pm.id AND DATE(p.createdate) BETWEEN DATE(CURRENT_DATE() - INTERVAL 1 MONTH) AND CURRENT_DATE()
         ''')
-        logger.info(payments)
         for p in payments:
             logger.info(f"change status for payment {p['id']}")
             xml = ET.fromstring(p['xmlparams'])
@@ -111,17 +114,20 @@ class TinkoffPaymentModule(payment.PaymentModule):
             psw = psw_node.text if psw_node is not None else ''
             key = key_node.text if key_node is not None else ''
             terminal = Termianl(key, psw)
+            logger.info(f"getting info about deal from bank")
             obj = terminal.get_state_deal(p["externalid"])
-            logger.info(p["externalid"])
             status = obj["Status"]
             if status == "CONFIRMED":
+                logger.info(f"payment confirmed")
                 payment.set_paid(p['id'], '', p['externalid'])
             elif status ==  "REJECTED" or status == "DEADLINE_EXPIRED":
+                logger.info(f"payment canceled")
                 payment.set_canceled(p['id'], '', p['externalid'])
                 raise billmgr.exception.XmlException('msg_error_status_rejected')
             elif status == "AUTHORIZED":
+                logger.info(f"payment authorized, sending confirm request")
                 obj = terminal.confirm_deal(p['externalid'])
-                if obj["Status"] == "true":
+                if obj["Success"] == "true":
                     logger.info(f"confirm authorized payment id: {p['id']}")
             else:
                 continue
