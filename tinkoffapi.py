@@ -7,6 +7,7 @@ import billmgr.logger as logging
 MODULE = 'tinkoffapi'
 logging.init_logging(MODULE)
 logger = logging.get_logger(MODULE)
+TERMINAL_ACCES_ERORS = ('60','66','202','205','331','501')
 
 TINKOFF_URL = "https://securepay.tinkoff.ru/v2/"
 GET_STATE = "GetState"
@@ -46,6 +47,12 @@ class Termianl:
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
+        if obj["ErrorCode"] in TERMINAL_ACCES_ERORS:
+            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
+        if obj["ErrorCode"] == "3003":
+            raise billmgr.exception.XmlException('msg_error_payment_fraud')
+        if obj["ErrorCode"] != "0":
+            raise billmgr.exception.XmlException('msg_error_unknown_error')
         return obj
 
     def _generate_token(self, data):

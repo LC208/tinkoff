@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import billmgr.exception
 import payment
 import sys
 
@@ -39,10 +40,15 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
             redirect_url = obj["PaymentURL"]
             logger.info(f"set in pay")
             payment.set_in_pay(self.elid,'',obj["PaymentId"])
+        except billmgr.exception.XmlException as ex:
+            logger.error(ex.err_type)
+            if(ex.err_type == 'msg_error_payment_fraud'):
+                payment.set_fraud(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
+            sys.stdout.write(fail_form)
         except Exception as err:
             logger.error(err.args)
             sys.stdout.write(fail_form)
-            payment.set_canceled(self.elid, f'{obj["Message"]}, {obj["Details"]}',  '')
+        
 
 
         payment_form =  "<html>\n"

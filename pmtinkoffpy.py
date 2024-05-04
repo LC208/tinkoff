@@ -9,6 +9,7 @@ import billmgr.logger as logging
 import xml.etree.ElementTree as ET
 
 from tinkoffapi import Termianl
+from tinkoffapi import TERMINAL_ACCES_ERORS
 
 MODULE = 'pmtinkoffpy'
 logging.init_logging(MODULE)
@@ -46,12 +47,13 @@ class TinkoffPaymentModule(payment.PaymentModule):
         if float(minamount) < 1:
             raise billmgr.exception.XmlException('msg_error_too_small_min_amount')
 
+        #126 - рубли
         if currency != "126":
             raise billmgr.exception.XmlException('msg_error_only_support_rubles')
         
-        obj = terminal.init_deal("1000","TinkoffBankTest")
-        if obj["ErrorCode"] in ('60','66','202','205','331','501'):
-            raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
+
+        terminal.init_deal("1000","TinkoffBankTest")
+
         
 
     
@@ -79,7 +81,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
             terminal = Termianl(key, psw)
             obj = terminal.get_state_deal(pm[0]['externalid'])
-            if(obj["ErrorCode"] != '0' or not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
+            if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
                 raise NotImplemented
 
             terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
