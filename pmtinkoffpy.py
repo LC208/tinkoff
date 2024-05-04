@@ -68,7 +68,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             elid = elid_node.text if elid_node is not None else ''
             pm = billmgr.db.db_query(f'''
             SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
-            WHERE pm.module = 'pmtinkoffpy' AND p.id = % AND p.paymethod = pm.id
+            WHERE pm.module = 'pmtinkoffpy' AND p.id = %s AND p.paymethod = pm.id
             ''', elid)
 
             xml1 = ET.fromstring(pm[0]['xmlparams'])
