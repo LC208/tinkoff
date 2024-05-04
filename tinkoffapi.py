@@ -38,34 +38,25 @@ class Termianl:
         return obj
 
     def _send_request(self,method,command, main_param ={}, additional_param={}):
-        logger.info(1111)
+        logger.info(f"send {method} request with command {command}")
         self._generate_token(main_param)
+        logger.info("generate token")
         main_param["Token"] = self.token
+        logger.info("send request to bank")
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
-        logger.info(1111)
         if resp.status_code == 503:
-            logger.info(1111)
-            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         try:
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
-            logger.info(2)
-            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         if obj["ErrorCode"] in TERMINAL_ACCES_ERORS:
-            logger.info(3)
-            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         if obj["ErrorCode"] == "3003":
-            logger.info(4)
-            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_payment_fraud')
         if obj["ErrorCode"] != "0":
-            logger.info(5)
-            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_unknown_error')
-        logger.info(22222)
+        logger.info(obj)
         return obj
 
     def _generate_token(self, data):
@@ -91,7 +82,5 @@ class Termianl:
         return self._send_request('POST', ADDCUSTOMER, data)
 
     def get_state_deal(self, payment_id):
-        logger.info(1111)
         data = {"TerminalKey": self.terminalkey, "PaymentId": payment_id}
-        logger.info(1111)
         return self._send_request('POST', GET_STATE, data)

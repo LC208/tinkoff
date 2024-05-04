@@ -82,6 +82,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
             terminal = Termianl(key, psw)
             obj = terminal.get_state_deal(pm[0]['externalid'])
             if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
+                logger.info("test")
                 raise NotImplemented
 
             
