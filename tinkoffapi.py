@@ -41,6 +41,7 @@ class Termianl:
         self._generate_token(main_param)
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
+        logger.info(1111)
         if resp.status_code == 503:
             logger.info(1111)
             logger.info(obj)
@@ -63,6 +64,7 @@ class Termianl:
             logger.info(5)
             logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_unknown_error')
+        logger.info(22222)
         return obj
 
     def _generate_token(self, data):
