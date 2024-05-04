@@ -57,7 +57,6 @@ class TinkoffPaymentModule(payment.PaymentModule):
     
     def RF_Set(self, xml: ET.ElementTree):
         try:
-            logger.info(f"xmlparams {ET.tostring(xml.getroot(),'unicode')}")
             xml = xml.getroot()
 
             elid_node = xml.find('./source_payment')
