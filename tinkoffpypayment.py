@@ -45,6 +45,8 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
             logger.error(err.args)
             sys.stdout.write(fail_form)
         payment_form = template.render(url=redirect_url)
+        logger.info(payment_form)
+        logger.info(fail_form)
         sys.stdout.write(payment_form)
 
 
