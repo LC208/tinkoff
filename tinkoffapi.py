@@ -40,13 +40,13 @@ class Termianl:
     def _send_request(self,method,command, main_param ={}, additional_param={}):
         logger.info(f"send {method} request with command {command}")
         self._generate_token(main_param)
-        logger.info("generate token")
         main_param["Token"] = self.token
         logger.info("send request to bank")
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
         if resp.status_code == 503:
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         try:
+            logger.info("parse answer")
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
@@ -57,10 +57,10 @@ class Termianl:
             raise billmgr.exception.XmlException('msg_error_payment_fraud')
         if obj["ErrorCode"] != "0":
             raise billmgr.exception.XmlException('msg_error_unknown_error')
-        logger.info(obj)
         return obj
 
     def _generate_token(self, data):
+        logger.info("generate token")
         data = data.copy()
         data["Password"]=self.terminalpsw
         data = dict(sorted(data.items()))

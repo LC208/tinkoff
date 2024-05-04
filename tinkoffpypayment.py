@@ -9,11 +9,19 @@ import billmgr
 
 from tinkoffapi import Termianl
 
+from jinja2 import Environment,FileSystemLoader,select_autoescape
+
 
 
 MODULE = 'tinkoffpypayment'
 logging.init_logging(MODULE)
 logger = logging.get_logger(MODULE)
+
+env = Environment(
+    loader=FileSystemLoader('.'),
+    autoescape=select_autoescape(['html'])
+)
+template = env.get_template('template.html')
 
 class TinkoffPaymentCgi(payment.PaymentCgi):
 
@@ -22,19 +30,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         # здесь для примера выводим параметры метода оплаты (self.paymethod_params) и платежа (self.payment_params) в лог
         logger.info(f"procces pay")
         terminal = Termianl(self.paymethod_params["terminalkey"] ,self.paymethod_params["terminalpsw"] )
-
-        fail_form =  "<html>\n"
-        fail_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-        fail_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
-        fail_form += "	<script language='JavaScript'>\n"
-        fail_form += "		function DoSubmit() {\n"
-        fail_form += "			window.location.assign('" + self.fail_page + "');\n"
-        fail_form += "		}\n"
-        fail_form += "	</script>\n"
-        fail_form += "</head>\n"
-        fail_form += "<body onload='DoSubmit()'>\n"
-        fail_form += "</body>\n"
-        fail_form += "</html>\n"
+        fail_form = template.render(url=self.fail_page)
         try:
             obj = terminal.init_deal(str(int(float(self.payment_params["paymethodamount"])*100)), f"external_{self.elid}",self.success_page,self.fail_page)
             redirect_url = obj["PaymentURL"]
@@ -48,19 +44,7 @@ class TinkoffPaymentCgi(payment.PaymentCgi):
         except Exception as err:
             logger.error(err.args)
             sys.stdout.write(fail_form)
-        payment_form =  "<html>\n"
-        payment_form += "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-        payment_form += "<link rel='shortcut icon' href='billmgr.ico' type='image/x-icon' />"
-        payment_form += "	<script language='JavaScript'>\n"
-        payment_form += "		function DoSubmit() {\n"
-        payment_form += "			window.location.assign('" + redirect_url + "');\n"
-        payment_form += "		}\n"
-        payment_form += "	</script>\n"
-        payment_form += "</head>\n"
-        payment_form += "<body onload='DoSubmit()'>\n"
-        payment_form += "</body>\n"
-        payment_form += "</html>\n"
-
+        payment_form = template.render(url=redirect_url)
         sys.stdout.write(payment_form)
 
 
