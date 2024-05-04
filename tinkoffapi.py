@@ -42,16 +42,25 @@ class Termianl:
         main_param["Token"] = self.token
         resp = requests.request(method=method,url=f"{self.BASE_URL}{command}",json=dict(list(main_param.items()) + list(additional_param.items())),headers={"Content-Type":"application/json"})
         if resp.status_code == 503:
+            logger.info(1)
+            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_repeat_again')
         try:
             obj = json.loads(resp.content.decode("UTF-8"))
         except:
+            logger.info(2)
+            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_json_parsing_error')
         if obj["ErrorCode"] in TERMINAL_ACCES_ERORS:
+            logger.info(3)
+            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_wrong_terminal_info')
         if obj["ErrorCode"] == "3003":
+            logger.info(4)
+            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_payment_fraud')
         if obj["ErrorCode"] != "0":
+            logger.info(obj)
             raise billmgr.exception.XmlException('msg_error_unknown_error')
         return obj
 
