@@ -81,11 +81,9 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
             terminal = Termianl(key, psw)
             obj = terminal.get_state_deal(pm[0]['externalid'])
-            if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED')):
+            if(not (obj["Status"] == 'CONFIRMED' or obj["Status"] == 'AUTHORIZED' or obj["Status"] == "PARTIAL_REFUNDED")):
                 logger.info("test")
                 raise NotImplemented
-
-            
             terminal.cancel_deal(pm[0]['externalid'],str(int(float(amount)*-100)))
             logger.info("refunded")
         except Exception as ex:
