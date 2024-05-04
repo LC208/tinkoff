@@ -234,7 +234,6 @@ class PaymentModule(ABC):
             # elif command == FEATURE_RFVALIDATE:
             #     self.RF_Validate(ET.parse(sys.stdin))
             elif command == FEATURE_RFSET:
-                logger.info(f"sys input: {ET.tostring(ET.parse(sys.stdin).getroot,'unicode')}")
                 self.RF_Set(ET.parse(sys.stdin))
 
 
