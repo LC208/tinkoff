@@ -220,7 +220,7 @@ class PaymentModule(ABC):
                 raise Exception("invalid_arguments")
 
             command = sys.argv[2]
-            logger.info(f"sys input: {ET.parse(sys.stdin)}")
+            logger.info(f"sys input: {ET.tostring(ET.parse(sys.stdin).getroot,'unicode')}")
 
             if command == "config":
                 xml = self.Config()
