@@ -58,7 +58,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
     
     def RF_Set(self, xml: ET.ElementTree):
         try:
-            logger.info("start refund")
+            
             xml = xml.getroot()
 
             elid_node = xml.find('./source_payment')
@@ -66,6 +66,7 @@ class TinkoffPaymentModule(payment.PaymentModule):
 
             amount = amount_node.text if amount_node is not None else ''
             elid = elid_node.text if elid_node is not None else ''
+            logger.info(f"start refund for payment {elid}")
             pm = billmgr.db.db_query(f'''
             SELECT pm.xmlparams, p.externalid FROM paymethod pm, payment p
             WHERE pm.module = 'pmtinkoffpy' AND p.id = %s AND p.paymethod = pm.id
